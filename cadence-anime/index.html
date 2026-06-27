@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CADENCE — 音声訓練システム</title>
+<meta name="description" content="A voice training terminal from a 1988 anime. Run the drills, raise your sync ratio, purge the noise words. 話せ。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;600;800&family=Share+Tech+Mono&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ TITLE CARD INTRO ============ -->
+<div id="titlecards">
+  <div class="tcard" data-card="1"><span>音声新世紀</span></div>
+  <div class="tcard" data-card="2"><span>CADENCE</span><em>音声訓練システム</em></div>
+</div>
+
+<!-- ============ MAIN ============ -->
+<main id="main" hidden>
+
+  <!-- top status bar -->
+  <header class="statusbar">
+    <span class="sb-logo">CADENCE<i>//</i>VOICE TRAINING SYSTEM</span>
+    <span class="sb-mid mono" id="sbClock">T-00:00:00</span>
+    <span class="sb-right mono">STATUS: <b class="ok">NOMINAL</b></span>
+  </header>
+
+  <!-- warning ticker -->
+  <div class="ticker">
+    <div class="ticker-track mono">
+      <span>⚠ VOICE IS THE NEW KEYBOARD</span><span>音声入力時代</span><span>SPEECH 220 WPM</span><span>KEYBOARD 45 WPM</span><span>NOISE WORDS DEGRADE SYNC</span><span>毎日90秒</span><span>AUDIO UPLINK: NONE · LOCAL ONLY</span>
+      <span>⚠ VOICE IS THE NEW KEYBOARD</span><span>音声入力時代</span><span>SPEECH 220 WPM</span><span>KEYBOARD 45 WPM</span><span>NOISE WORDS DEGRADE SYNC</span><span>毎日90秒</span><span>AUDIO UPLINK: NONE · LOCAL ONLY</span>
+    </div>
+  </div>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero-left">
+      <p class="mono dim">FILE.01 // ブリーフィング</p>
+      <h1 class="hero-jp">話せ。</h1>
+      <p class="hero-en">SPEAK.</p>
+      <p class="hero-body">The machines grew ears. Claude, Siri, Flow: all listening.
+      Your keyboard does 45 words a minute. Your voice does 220.
+      This terminal trains the only interface you were born with.</p>
+      <div class="hero-cta-row">
+        <button class="abtn abtn-primary" data-open-trainer>起動 — INITIATE TRAINING</button>
+        <button class="abtn" data-open-trainer="sprint">QUICK SORTIE: 60 SEC</button>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hud-panel">
+        <header class="hud-head mono"><span>SYNC MONITOR</span><span class="blink red">● REC STANDBY</span></header>
+        <div class="hex-wrap">
+          <svg viewBox="0 0 200 200" class="hex-svg">
+            <polygon points="100,8 180,54 180,146 100,192 20,146 20,54" class="hex-outer"/>
+            <polygon points="100,30 161,65 161,135 100,170 39,135 39,65" class="hex-inner"/>
+          </svg>
+          <div class="hex-label">
+            <b class="mono" id="fakeSync">87.3</b>
+            <span class="mono">SYNC %</span>
+          </div>
+        </div>
+        <div class="hud-rows mono">
+          <div class="hud-row"><span>PACE</span><div class="hud-bar"><i id="hudPace" style="width:72%"></i></div><b id="hudPaceV">164</b></div>
+          <div class="hud-row"><span>NOISE</span><div class="hud-bar"><i id="hudNoise" style="width:18%" class="bar-red"></i></div><b id="hudNoiseV">1.8</b></div>
+          <div class="hud-row"><span>FLOW</span><div class="hud-bar"><i id="hudFlow" style="width:91%" class="bar-cyan"></i></div><b id="hudFlowV">0</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BRIEFING DATA ============ -->
+  <section class="sec">
+    <header class="sec-head">
+      <span class="sec-tab">FILE.02</span>
+      <h2>状況報告 <span class="sec-en">// SITUATION REPORT</span></h2>
+    </header>
+    <div class="brief-grid">
+      <p class="brief-big">The keyboard era taught you to <em>edit before sending</em>.
+      The voice era has no backspace. Untrained speech arrives at the listener
+      full of noise: <span class="noise-word">like</span>, <span class="noise-word">um</span>,
+      <span class="noise-word">basically</span>. Training purges it.</p>
+      <div class="data-panel mono">
+        <div class="data-row"><span>SPEECH THROUGHPUT</span><b class="cyan">220 WPM</b></div>
+        <div class="data-row"><span>KEYBOARD THROUGHPUT</span><b class="orange">45 WPM</b></div>
+        <div class="data-row"><span>ADVANTAGE</span><b class="cyan">4.8×</b></div>
+        <div class="data-row"><span>UNTRAINED NOISE RATE</span><b class="red">6–10 / 100W</b></div>
+        <div class="data-row"><span>REQUIRED DAILY DOSE</span><b>90 SEC</b></div>
+        <div class="data-row"><span>AUDIO UPLINK</span><b class="ok">NONE · LOCAL</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OPERATIONS ============ -->
+  <section class="sec">
+    <header class="sec-head">
+      <span class="sec-tab">FILE.03</span>
+      <h2>作戦 <span class="sec-en">// OPERATIONS</span></h2>
+    </header>
+    <div class="ops-grid">
+      <article class="op">
+        <header class="op-head"><span class="mono">OP-01</span><span class="op-jp">疾走</span></header>
+        <h3>SPRINT</h3>
+        <p class="mono op-spec">60 SEC // TARGET: PACE</p>
+        <p>Sustained speech generation under time pressure. No stalls, no restarts. Hold the line at 130+ WPM.</p>
+        <button class="abtn" data-open-trainer="sprint">LAUNCH ▸</button>
+      </article>
+      <article class="op">
+        <header class="op-head"><span class="mono">OP-02</span><span class="op-jp">掃討</span></header>
+        <h3>FILLER HUNT</h3>
+        <p class="mono op-spec">45 SEC // TARGET: NOISE</p>
+        <p>Live noise detection. Every "like" and "basically" trips the warning klaxon. Sweep your speech clean.</p>
+        <button class="abtn" data-open-trainer="filler">LAUNCH ▸</button>
+      </article>
+      <article class="op">
+        <header class="op-head"><span class="mono">OP-03</span><span class="op-jp">蒸留</span></header>
+        <h3>DISTILL</h3>
+        <p class="mono op-spec">30 SEC // TARGET: COMPRESSION</p>
+        <p>One idea, one pass, hard cutoff. The TL;DR reflex that voice-first machines reward.</p>
+        <button class="abtn" data-open-trainer="distill">LAUNCH ▸</button>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ SYNC RATIO ============ -->
+  <section class="sec">
+    <header class="sec-head">
+      <span class="sec-tab">FILE.04</span>
+      <h2>同調率 <span class="sec-en">// SYNC RATIO</span></h2>
+    </header>
+    <p class="sec-lede">Every sortie is scored by three subsystems. Their weighted
+    consensus is your sync ratio, 0 to 100.</p>
+    <div class="magi">
+      <svg viewBox="0 0 760 300" class="magi-svg" aria-hidden="true">
+        <line x1="380" y1="150" x2="160" y2="80"/>
+        <line x1="380" y1="150" x2="600" y2="80"/>
+        <line x1="380" y1="150" x2="380" y2="262"/>
+        <line x1="160" y1="80" x2="600" y2="80" class="faint"/>
+        <line x1="160" y1="80" x2="380" y2="262" class="faint"/>
+        <line x1="600" y1="80" x2="380" y2="262" class="faint"/>
+      </svg>
+      <div class="magi-node magi-center mono"><b>SYNC</b><span>同調率</span></div>
+      <div class="magi-node magi-a"><b class="mono">PACE-1</b><span>130–190 wpm is the authority band. Hesitant below, garbled above.</span></div>
+      <div class="magi-node magi-b"><b class="mono">NOISE-2</b><span>Fillers per 100 words. Under 2, you sound rehearsed. Over 6, pattern orange.</span></div>
+      <div class="magi-node magi-c"><b class="mono">FLOW-3</b><span>Dead air over 2 seconds. A pause reads as thought. A stall reads as a crash.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="finale">
+    <p class="finale-jp">さあ、話せ。</p>
+    <p class="finale-en">YOUR FIRST SORTIE TAKES 60 SECONDS.</p>
+    <button class="abtn abtn-primary abtn-big" data-open-trainer>INITIATE — 起動</button>
+  </section>
+
+  <footer class="foot mono">
+    <span>CADENCE // 音声訓練システム v0.808</span>
+    <span>SPEECH ENGINE: LOCAL BROWSER · NO UPLINK · BEST IN CHROME</span>
+    <span>(c) 1988-2026 NEO-TOKYO VOICE INSTITUTE</span>
+  </footer>
+</main>
+
+<!-- ============ TRAINER / COCKPIT ============ -->
+<div class="cockpit" id="trainer" hidden>
+  <header class="statusbar cockpit-bar">
+    <span class="sb-logo">CADENCE<i>//</i>COCKPIT</span>
+    <div class="c-tabs">
+      <button class="ctab active" data-view="drills">OPS</button>
+      <button class="ctab" data-view="progress">LOG</button>
+    </div>
+    <button class="c-close mono" id="trainerClose">EJECT ✕</button>
+  </header>
+
+  <div class="warnband" id="warnBand" hidden><span>警告</span> NOISE DETECTED <span>警告</span> NOISE DETECTED <span>警告</span> NOISE DETECTED</div>
+
+  <!-- picker -->
+  <section class="cview" id="view-drills">
+    <h2 class="cv-jp">作戦選択</h2>
+    <p class="mono cv-sub" id="streakLine">// NO SORTIES ON RECORD. FIRST RUN SETS BASELINE.</p>
+    <div class="cpick">
+      <button class="cpick-row" data-start="sprint"><span class="mono cp-id">OP-01</span><b>SPRINT 疾走</b><span class="mono cp-meta">60 SEC · PACE</span><span class="cp-go">▸</span></button>
+      <button class="cpick-row" data-start="filler"><span class="mono cp-id">OP-02</span><b>FILLER HUNT 掃討</b><span class="mono cp-meta">45 SEC · NOISE</span><span class="cp-go">▸</span></button>
+      <button class="cpick-row" data-start="distill"><span class="mono cp-id">OP-03</span><b>DISTILL 蒸留</b><span class="mono cp-meta">30 SEC · COMPRESSION</span><span class="cp-go">▸</span></button>
+    </div>
+    <p class="mic-warning mono" id="micWarning" hidden></p>
+  </section>
+
+  <!-- session -->
+  <section class="cview" id="view-session" hidden>
+    <p class="mono s-mode" id="sessionMode">OP-01 SPRINT · 60 SEC</p>
+    <div class="prompt-panel">
+      <p class="mono pp-kicker">MISSION DIRECTIVE // 指令</p>
+      <p class="pp-text" id="promptText"></p>
+      <button class="mono pp-shuffle" id="promptShuffle">[ RE-ROLL ]</button>
+    </div>
+
+    <div class="c-stage">
+      <div class="c-timer hud-panel">
+        <header class="hud-head mono"><span>T-MINUS</span></header>
+        <b class="mono" id="timerNum">60</b>
+        <div class="hud-bar c-timer-bar"><i id="timerBar" style="width:100%"></i></div>
+      </div>
+      <div class="c-scope hud-panel">
+        <header class="hud-head mono"><span>AUDIO SCOPE</span><span class="blink red" id="recDot" hidden>● REC</span></header>
+        <canvas id="waveCanvas" width="640" height="120"></canvas>
+      </div>
+      <div class="c-noise hud-panel">
+        <header class="hud-head mono"><span>NOISE</span></header>
+        <b class="mono red" id="liveFillerCount">0</b>
+        <span class="mono dim">DETECTED</span>
+      </div>
+    </div>
+
+    <div class="c-transcript mono" id="liveTranscript"><span class="lt-placeholder">&gt; AWAITING VOICE INPUT_</span></div>
+
+    <div class="c-controls">
+      <button class="abtn abtn-primary" id="recordBtn"><span id="recordBtnLabel">● RECORD — 録音</span></button>
+      <button class="abtn" id="backToDrills">← OPS</button>
+    </div>
+  </section>
+
+  <!-- results -->
+  <section class="cview" id="view-results" hidden>
+    <h2 class="cv-jp">戦果報告</h2>
+    <div class="res-grid">
+      <div class="res-sync hud-panel">
+        <header class="hud-head mono"><span>SYNC RATIO</span><span id="scoreGradeTag" class="mono">—</span></header>
+        <div class="res-sync-num"><b class="mono" id="scoreNum">0</b><span class="mono">%</span></div>
+        <div class="hud-bar res-bar"><i id="scoreBar"></i></div>
+        <p class="res-tip" id="scoreTip">—</p>
+      </div>
+      <div class="data-panel mono res-data">
+        <div class="data-row"><span>PACE</span><b><span id="statWpm">—</span> WPM</b></div>
+        <div class="data-row"><span>NOISE / 100 WORDS</span><b id="statFillers">—</b></div>
+        <div class="data-row"><span>STALLS &gt; 2 SEC</span><b id="statPauses">—</b></div>
+        <div class="data-row"><span>TOTAL WORDS</span><b id="statWords">—</b></div>
+      </div>
+    </div>
+    <div class="c-transcript mono res-transcript">
+      <p class="pp-kicker mono">FLIGHT RECORDER // NOISE FLAGGED</p>
+      <p id="resultTranscript">—</p>
+    </div>
+    <div class="c-controls">
+      <button class="abtn abtn-primary" id="againBtn">RE-SORTIE ▸</button>
+      <button class="abtn" id="resultsToDrills">OPS SELECT</button>
+    </div>
+  </section>
+
+  <!-- log -->
+  <section class="cview" id="view-progress" hidden>
+    <h2 class="cv-jp">作戦記録</h2>
+    <p class="mono cv-sub" id="progressSummary">// NO SORTIES ON RECORD.</p>
+    <div class="hud-panel chart-panel">
+      <header class="hud-head mono"><span>SYNC HISTORY</span><span>LAST 40</span></header>
+      <canvas id="historyChart" width="760" height="220"></canvas>
+    </div>
+    <div class="history-list mono" id="historyList"></div>
+  </section>
+</div>
+
+<!-- scanline overlay -->
+<div id="scan" aria-hidden="true"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

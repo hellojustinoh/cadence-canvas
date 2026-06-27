@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadence '95 — Voice Training System</title>
+<meta name="description" content="A 1995 operating system for your voice. Daily talking drills, an honest score, and a TV full of static. Won't you say it out loud, neighbor?">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=DotGothic16&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ BOOT SCREEN ============ -->
+<div id="boot">
+  <div class="boot-inner">
+    <div class="boot-logo">
+      <span class="boot-ball" aria-hidden="true"></span>
+      <span class="boot-word">CADENCE</span>
+    </div>
+    <p class="boot-line">Voice Training System, Version 1.0</p>
+    <p class="boot-line boot-dim">Copyright (c) 1995 Neighborhood Software Co.</p>
+    <div class="boot-checks" id="bootChecks"></div>
+    <div class="boot-bar"><div id="bootFill"></div></div>
+    <p class="boot-skip">press any key to skip</p>
+  </div>
+</div>
+
+<!-- ============ DESKTOP ============ -->
+<div id="desktop" hidden>
+
+  <!-- menu bar -->
+  <div class="menubar">
+    <div class="mb-left">
+      <span class="mb-logo"><span class="mb-ball"></span> CADENCE</span>
+      <span class="mb-item" data-open-win="win-welcome">File</span>
+      <span class="mb-item" data-open-win="win-drills">Drills</span>
+      <span class="mb-item" data-open-win="win-scores">Scores</span>
+      <span class="mb-item" data-open-win="win-about">Help</span>
+    </div>
+    <div class="mb-right">
+      <button class="mb-crt" id="crtToggle">CRT: ON</button>
+      <span class="mb-clock" id="mbClock">THU 11 JUN 1997 · 4:32 PM</span>
+    </div>
+  </div>
+
+  <!-- windows -->
+  <div class="window" id="win-welcome" style="left:6%; top:9%; width:380px;">
+    <div class="win-title"><button class="win-close" data-close>✕</button><b>WELCOME.TXT</b></div>
+    <div class="win-body">
+      <h1 class="wel-h">It's a beautiful day<br>to say it out loud.</h1>
+      <p>Hello, neighbor. The computers are learning to listen. You can
+      type at 45 words per minute, but you can <b>talk at 220</b>.</p>
+      <p>Cadence is a little voice gym from 1995 (give or take). Three
+      talking exercises, one honest score, zero judgment.</p>
+      <button class="rbtn rbtn-primary" data-open-win="win-drills">▶ TODAY'S EPISODES</button>
+      <p class="fine">Your voice never leaves this computer. Promise.</p>
+    </div>
+  </div>
+
+  <div class="window" id="win-tv" style="right:5%; top:12%; width:360px;">
+    <div class="win-title"><button class="win-close" data-close>✕</button><b>CHANNEL 3</b></div>
+    <div class="win-body win-body-flush">
+      <div class="tv-frame">
+        <canvas id="tvCanvas" width="180" height="120"></canvas>
+        <span class="tv-onair" id="tvOnair" hidden>● ON AIR</span>
+      </div>
+      <p class="tv-caption" id="tvCaption">NOW SHOWING: STATIC · until you start talking</p>
+    </div>
+  </div>
+
+  <div class="window" id="win-drills" style="left:12%; top:46%; width:430px;">
+    <div class="win-title"><button class="win-close" data-close>✕</button><b>TODAY'S EPISODES</b></div>
+    <div class="win-body win-body-flush">
+      <button class="ep" data-start="sprint">
+        <span class="ep-num">EP.01</span><span class="ep-name">SPRINT</span><span class="ep-meta">60 SEC · PACE</span><span class="ep-play">▶</span>
+      </button>
+      <button class="ep" data-start="filler">
+        <span class="ep-num">EP.02</span><span class="ep-name">FILLER HUNT</span><span class="ep-meta">45 SEC · CLEAN TALK</span><span class="ep-play">▶</span>
+      </button>
+      <button class="ep" data-start="distill">
+        <span class="ep-num">EP.03</span><span class="ep-name">DISTILL</span><span class="ep-meta">30 SEC · ONE IDEA</span><span class="ep-play">▶</span>
+      </button>
+      <p class="ep-foot" id="streakLine">No episodes taped yet. The first one is the bravest.</p>
+      <p class="mic-warning" id="micWarning" hidden></p>
+    </div>
+  </div>
+
+  <!-- session window -->
+  <div class="window win-wide" id="win-session" style="left:24%; top:14%; width:540px;" hidden>
+    <div class="win-title"><button class="win-close" data-close-session>✕</button><b id="sessionTitle">RECORDING BOOTH</b></div>
+    <div class="win-body" id="sessionBody">
+      <p class="s-mode" id="sessionMode">EP.01 SPRINT · 60 SEC</p>
+      <div class="prompt-box">
+        <p class="pb-kicker">TODAY'S PROMPT</p>
+        <p class="pb-text" id="promptText"></p>
+        <button class="pb-shuffle" id="promptShuffle">[ shuffle ]</button>
+      </div>
+      <div class="meter-row">
+        <div class="timer-box"><b id="timerNum">60</b><span>SEC</span></div>
+        <div class="seg-bar" id="segBar"></div>
+        <div class="fill-box"><b id="liveFillerCount">0</b><span>FILLERS</span></div>
+      </div>
+      <canvas id="waveCanvas" width="480" height="90"></canvas>
+      <div class="live-transcript" id="liveTranscript"><span class="lt-placeholder">&gt; transcript will type here_</span></div>
+      <div class="controls">
+        <button class="rbtn rbtn-primary" id="recordBtn"><span id="recordBtnLabel">● RECORD</span></button>
+        <button class="rbtn" data-close-session>STOP &amp; CLOSE</button>
+      </div>
+    </div>
+
+    <!-- results panel swaps in -->
+    <div class="win-body" id="resultsBody" hidden>
+      <p class="s-mode">YOUR COGENCY REPORT</p>
+      <div class="report-grid">
+        <div class="score-box">
+          <b id="scoreNum">0</b>
+          <span>OUT OF 100</span>
+        </div>
+        <div class="report-lines">
+          <p class="grade-line" id="scoreGrade">…</p>
+          <p class="tip-line" id="scoreTip">…</p>
+        </div>
+      </div>
+      <table class="stat-table">
+        <tr><td>WORDS PER MINUTE</td><td id="statWpm">–</td></tr>
+        <tr><td>FILLERS PER 100 WORDS</td><td id="statFillers">–</td></tr>
+        <tr><td>STALLS OVER 2 SEC</td><td id="statPauses">–</td></tr>
+        <tr><td>TOTAL WORDS</td><td id="statWords">–</td></tr>
+      </table>
+      <div class="live-transcript result-transcript">
+        <p class="pb-kicker">THE TAPE · FILLERS MARKED</p>
+        <p id="resultTranscript">–</p>
+      </div>
+      <div class="controls">
+        <button class="rbtn rbtn-primary" id="againBtn">↻ TAPE ANOTHER</button>
+        <button class="rbtn" id="resultsToDrills">EPISODE LIST</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- scores window -->
+  <div class="window" id="win-scores" style="left:38%; top:30%; width:480px;" hidden>
+    <div class="win-title"><button class="win-close" data-close>✕</button><b>SCORES.LOG</b></div>
+    <div class="win-body">
+      <p class="fine" id="progressSummary">No sessions on the log yet.</p>
+      <canvas id="historyChart" width="420" height="160"></canvas>
+      <div class="history-list" id="historyList"></div>
+    </div>
+  </div>
+
+  <!-- about window -->
+  <div class="window" id="win-about" style="left:30%; top:22%; width:340px;" hidden>
+    <div class="win-title"><button class="win-close" data-close>✕</button><b>ABOUT CADENCE</b></div>
+    <div class="win-body">
+      <p><b>Cadence '95</b> is a voice gym wearing a cardigan.</p>
+      <p>As the machines grow ears (Claude, Siri, Wispr Flow and friends),
+      the fastest interface you own is your mouth. These drills keep it sharp,
+      kind, and clear.</p>
+      <p>Speech recognition runs on this computer, in this browser.
+      Nothing is uploaded. Works best in Chrome.</p>
+      <p class="fine">Made with care in the neighborhood. v1.0, 64K VOICE RAM OK.</p>
+    </div>
+  </div>
+
+  <!-- dock -->
+  <div class="dock">
+    <button class="dock-item" data-open-win="win-welcome"><span>📄</span>Welcome</button>
+    <button class="dock-item" data-open-win="win-drills"><span>🎙️</span>Episodes</button>
+    <button class="dock-item" data-open-win="win-tv"><span>📺</span>Channel 3</button>
+    <button class="dock-item" data-open-win="win-scores"><span>📈</span>Scores</button>
+    <button class="dock-item" data-open-win="win-about"><span>❓</span>About</button>
+  </div>
+</div>
+
+<!-- CRT overlay -->
+<div id="crt" aria-hidden="true"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

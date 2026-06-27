@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadence — say it like you mean it</title>
+<meta name="description" content="A playful voice gym. Daily talking drills that train you to speak fast, clean, and clear. Because voice is the new keyboard.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ STACKED CARD NAV ============ -->
+<nav class="cardnav">
+  <a class="cn-card cn-white" href="#top"><span>00</span><b>Cadence</b></a>
+  <a class="cn-card cn-orange" href="#hello"><span>01</span><b>Hello</b></a>
+  <a class="cn-card cn-purple" href="#drills"><span>02</span><b>Drills</b></a>
+  <a class="cn-card cn-black" href="#why"><span>03</span><b>Why voice</b></a>
+  <a class="cn-card cn-blue" href="#how"><span>04</span><b>How</b></a>
+  <button class="cn-card cn-yellow" data-open-trainer><span>05</span><b>Play ▸</b></button>
+</nav>
+
+<main class="canvas" id="top">
+
+  <!-- ============ HERO ============ -->
+  <header class="hero" id="hello">
+    <p class="funfact">Here's a fun fact: you talk 5× faster than you type</p>
+    <h1 class="hero-h1">
+      <span class="h1-line">Say it <span class="tile tile-orange wiggle">🎙️</span> like</span>
+      <span class="h1-line">you <span class="tile tile-blue wiggle">💬</span> mean it<span class="dot">.</span></span>
+    </h1>
+    <p class="hero-sub">Cadence is a talking gym. Tiny daily drills that train your mouth
+    to keep up with your brain, for a world where you talk to your computer.</p>
+    <button class="bigpill" data-open-trainer>Start a drill, it's 60 seconds</button>
+
+    <!-- bouncy tile row -->
+    <div class="tile-row">
+      <span class="tile tile-green bounce" style="--d:0s">⚡</span>
+      <span class="tile tile-yellow bounce" style="--d:.12s">⏱️</span>
+      <span class="tile tile-pink bounce" style="--d:.24s">👻</span>
+      <span class="tile tile-purple bounce" style="--d:.36s">📈</span>
+      <span class="tile tile-blue bounce" style="--d:.48s">🔥</span>
+    </div>
+  </header>
+
+  <!-- ============ ORANGE STATEMENT BLOCK ============ -->
+  <section class="block block-orange" id="why">
+    <span class="numpill">01</span>
+    <h2 class="block-h">Talking is<br>the new typing.</h2>
+    <p class="block-p">Claude, ChatGPT, Siri, Wispr Flow. Every app you love is growing ears.
+    Typing tops out around 45 words a minute. Talking hits 220. The only catch:
+    your talking has to be worth listening to.</p>
+    <div class="vs-pills">
+      <div class="vs-pill"><b>45</b><span>wpm typing 🐢</span></div>
+      <div class="vs-pill vs-pill-win"><b>220</b><span>wpm talking 🚀</span></div>
+    </div>
+  </section>
+
+  <!-- ============ DRILLS ============ -->
+  <section class="drills" id="drills">
+    <h2 class="sec-h">Three games.<br>One clearer you.</h2>
+
+    <div class="game-cards">
+      <article class="game game-purple" data-rot="-2">
+        <span class="numpill numpill-light">02·A</span>
+        <span class="game-emoji">⚡</span>
+        <h3>Sprint</h3>
+        <p>Talk for 60 seconds without stalling. Your pace is the score.</p>
+        <button class="game-btn" data-open-trainer="sprint">Play Sprint</button>
+      </article>
+
+      <article class="game game-pink" data-rot="1.5">
+        <span class="numpill numpill-light">02·B</span>
+        <span class="game-emoji">👻</span>
+        <h3>Filler Hunt</h3>
+        <p>Every "like", "um" and "basically" feeds the ghost. Starve it.</p>
+        <button class="game-btn" data-open-trainer="filler">Play Filler Hunt</button>
+      </article>
+
+      <article class="game game-blue" data-rot="-1">
+        <span class="numpill numpill-light">02·C</span>
+        <span class="game-emoji">🎯</span>
+        <h3>Distill</h3>
+        <p>One idea. Thirty seconds. Land it before the buzzer.</p>
+        <button class="game-btn" data-open-trainer="distill">Play Distill</button>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ BLACK SCOREBOARD BLOCK ============ -->
+  <section class="block block-black">
+    <span class="numpill">03</span>
+    <h2 class="block-h">Every rep<br>gets a score.</h2>
+    <p class="block-p">Your browser listens, counts your words, catches your fillers,
+    and times your awkward pauses. Then it hands you one honest number out of 100.</p>
+    <div class="score-demo">
+      <div class="sd-tile sd-green"><b>164</b><span>words / min</span></div>
+      <div class="sd-tile sd-yellow"><b>1.8</b><span>fillers / 100w</span></div>
+      <div class="sd-tile sd-pink"><b>0</b><span>awkward stalls</span></div>
+      <div class="sd-tile sd-white"><b>87</b><span>cogency score</span></div>
+    </div>
+    <p class="block-fine">Audio never leaves your machine. Pinky promise, and also technically true.</p>
+  </section>
+
+  <!-- ============ HOW / STACKED CARDS ============ -->
+  <section class="how" id="how">
+    <h2 class="sec-h">Stupidly simple.<br>That's the point.</h2>
+    <div class="stack-row">
+      <div class="stackcard sc-green">
+        <span class="sc-num">1</span>
+        <h3>Get a prompt</h3>
+        <p>"Pitch your favorite app to a skeptical CFO." Go.</p>
+      </div>
+      <div class="stackcard sc-yellow">
+        <span class="sc-num">2</span>
+        <h3>Talk at it</h3>
+        <p>30 to 60 seconds. The mic listens, the ghost counts.</p>
+      </div>
+      <div class="stackcard sc-purple">
+        <span class="sc-num">3</span>
+        <h3>Get roasted, kindly</h3>
+        <p>A score, a tip, and your transcript with the fillers circled.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="block block-yellow finale">
+    <h2 class="block-h block-h-ink">Your move,<br>chatterbox.</h2>
+    <button class="bigpill bigpill-ink" data-open-trainer>Open the gym</button>
+    <p class="block-fine block-fine-ink">No account. No app. Works best in Chrome.</p>
+  </section>
+
+  <footer class="foot">
+    <b>Cadence</b> · a voice gym for the AI era · made of HTML and optimism
+  </footer>
+</main>
+
+<!-- ============ TRAINER OVERLAY ============ -->
+<div class="trainer" id="trainer" hidden>
+  <div class="trainer-top">
+    <a href="#top" class="t-logo" id="trainerLogo">Cadence</a>
+    <div class="t-tabs">
+      <button class="ttab active" data-view="drills">Games</button>
+      <button class="ttab" data-view="progress">Scores</button>
+    </div>
+    <button class="t-close" id="trainerClose">✕</button>
+  </div>
+
+  <!-- picker -->
+  <section class="tview" id="view-drills">
+    <h2 class="tv-h">Pick your game</h2>
+    <p class="tv-sub" id="streakLine">First round. Let's get a baseline.</p>
+    <div class="pick-row">
+      <button class="pick pick-purple" data-start="sprint"><span>⚡</span><b>Sprint</b><i>60 sec · pace</i></button>
+      <button class="pick pick-pink" data-start="filler"><span>👻</span><b>Filler Hunt</b><i>45 sec · clean talk</i></button>
+      <button class="pick pick-blue" data-start="distill"><span>🎯</span><b>Distill</b><i>30 sec · one idea</i></button>
+    </div>
+    <p class="mic-warning" id="micWarning" hidden></p>
+  </section>
+
+  <!-- session -->
+  <section class="tview" id="view-session" hidden>
+    <p class="s-mode" id="sessionMode">Sprint</p>
+    <div class="prompt-card">
+      <p class="pc-kicker">Your prompt</p>
+      <p class="pc-text" id="promptText"></p>
+      <button class="pc-shuffle" id="promptShuffle">↻ another one</button>
+    </div>
+
+    <div class="stage">
+      <div class="timer-tile">
+        <b id="timerNum">60</b>
+        <span>seconds</span>
+        <div class="t-bar"><i id="timerBar"></i></div>
+      </div>
+      <canvas id="waveCanvas" width="640" height="150"></canvas>
+      <div class="ghost-tile" id="ghostTile">
+        <span class="ghost-face" id="ghostFace">👻</span>
+        <b id="liveFillerCount">0</b>
+        <span>fillers fed</span>
+      </div>
+    </div>
+
+    <div class="live-transcript" id="liveTranscript"><span class="lt-placeholder">Your words land here…</span></div>
+
+    <div class="controls">
+      <button class="bigpill" id="recordBtn"><span id="recordBtnLabel">🎙️ Go</span></button>
+      <button class="ghost-btn" id="backToDrills">← games</button>
+    </div>
+  </section>
+
+  <!-- results -->
+  <section class="tview" id="view-results" hidden>
+    <h2 class="tv-h">Scoreboard</h2>
+    <div class="score-hero">
+      <div class="score-tile" id="scoreTile">
+        <b id="scoreNum">0</b>
+        <span>/ 100</span>
+      </div>
+      <div class="score-blurb">
+        <h3 id="scoreGrade">…</h3>
+        <p id="scoreTip">…</p>
+      </div>
+    </div>
+
+    <div class="stat-tiles">
+      <div class="st st-green"><b id="statWpm">–</b><span>words / min</span></div>
+      <div class="st st-yellow"><b id="statFillers">–</b><span>fillers / 100w</span></div>
+      <div class="st st-pink"><b id="statPauses">–</b><span>stalls &gt; 2s</span></div>
+      <div class="st st-blue"><b id="statWords">–</b><span>total words</span></div>
+    </div>
+
+    <div class="transcript-card">
+      <p class="pc-kicker">What you said, fillers circled</p>
+      <p id="resultTranscript">–</p>
+    </div>
+
+    <div class="controls">
+      <button class="bigpill" id="againBtn">↻ Run it back</button>
+      <button class="ghost-btn" id="resultsToDrills">Pick another game</button>
+    </div>
+  </section>
+
+  <!-- progress -->
+  <section class="tview" id="view-progress" hidden>
+    <h2 class="tv-h">Your scores</h2>
+    <p class="tv-sub" id="progressSummary">Nothing yet. Go make a number.</p>
+    <div class="chart-card">
+      <canvas id="historyChart" width="760" height="220"></canvas>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </section>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

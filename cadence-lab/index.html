@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CADENCE/LAB — spoken-thought training console</title>
+<meta name="description" content="A training console for spoken thought. Drills, telemetry, and a cogency score. Voice is the new keyboard; calibrate yours.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ TOP TICKER ============ -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span>VOICE THROUGHPUT 220 WPM <i class="up">▲</i></span>
+    <span>KEYBOARD 45 WPM <i class="dn">▼</i></span>
+    <span>THOUGHT ≈1,300 WPM</span>
+    <span>FILLER TAX: CREDIBILITY <i class="dn">▼</i></span>
+    <span>SIRI / CLAUDE / FLOW: LISTENING</span>
+    <span>DRILL LENGTH 30–60 SEC</span>
+    <span>AUDIO UPLOADED: 0 BYTES</span>
+    <span>VOICE THROUGHPUT 220 WPM <i class="up">▲</i></span>
+    <span>KEYBOARD 45 WPM <i class="dn">▼</i></span>
+    <span>THOUGHT ≈1,300 WPM</span>
+    <span>FILLER TAX: CREDIBILITY <i class="dn">▼</i></span>
+    <span>SIRI / CLAUDE / FLOW: LISTENING</span>
+    <span>DRILL LENGTH 30–60 SEC</span>
+    <span>AUDIO UPLOADED: 0 BYTES</span>
+  </div>
+</div>
+
+<!-- ============ LEFT RAIL ============ -->
+<aside class="rail">
+  <a class="rail-logo" href="#s0">CDN<br>/CE</a>
+  <nav class="rail-nav">
+    <a href="#s1"><b>01</b><span>Thesis</span></a>
+    <a href="#s2"><b>02</b><span>Drills</span></a>
+    <a href="#s3"><b>03</b><span>Telemetry</span></a>
+    <a href="#s4"><b>04</b><span>Protocol</span></a>
+  </nav>
+  <button class="rail-rec" data-open-console>
+    <span class="rec-dot"></span>REC
+  </button>
+</aside>
+
+<main class="page">
+
+  <!-- ============ HERO / 00 ============ -->
+  <section class="hero" id="s0">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="microlabel">CADENCE/LAB · SPOKEN-THOUGHT TRAINING CONSOLE · v2.0</p>
+        <h1 class="hero-h1">
+          <span class="line solid">TYPE</span>
+          <span class="line solid">LESS<span class="volt">.</span></span>
+          <span class="line ghost">SAY MORE.</span>
+        </h1>
+        <p class="hero-lede">Every interface is growing a microphone. Your output is no longer
+        how fast you type. It is how clearly you think out loud. This console trains that.</p>
+        <div class="hero-actions">
+          <button class="cta" data-open-console>INITIATE DRILL <span>→</span></button>
+          <p class="cta-note">60 SEC · NO ACCOUNT · AUDIO STAYS LOCAL</p>
+        </div>
+      </div>
+
+      <div class="hero-panel panel">
+        <header class="panel-head">
+          <span>INPUT MONITOR</span>
+          <span class="blink">● LIVE</span>
+        </header>
+        <canvas id="scope" width="640" height="280"></canvas>
+        <footer class="panel-foot">
+          <div class="chip"><b id="fakeWpm">182</b><span>WPM</span></div>
+          <div class="chip"><b id="fakeFill">2.1</b><span>FILL/100W</span></div>
+          <div class="chip"><b id="fakeStall">0</b><span>STALLS</span></div>
+        </footer>
+      </div>
+    </div>
+
+    <div class="hero-baseline">
+      <span>HUMAN SPEECH: 220 WPM MAX SUSTAINED</span>
+      <span>QWERTY: 45 WPM AVG</span>
+      <span>ADVANTAGE: 4.8×</span>
+    </div>
+  </section>
+
+  <!-- ============ 01 THESIS ============ -->
+  <section class="sec" id="s1">
+    <header class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>THESIS</h2>
+      <span class="sec-rule"></span>
+    </header>
+
+    <div class="thesis-grid">
+      <p class="thesis-big">The keyboard era trained a generation to <em>edit before
+      they speak</em>. The voice era has no backspace. The edit has to happen
+      <em>in your head</em>, at speaking speed.</p>
+
+      <div class="datasheet">
+        <div class="ds-row"><span>SPEAKING, SUSTAINED</span><b>220 WPM</b></div>
+        <div class="ds-row"><span>TYPING, AVERAGE KNOWLEDGE WORKER</span><b>45 WPM</b></div>
+        <div class="ds-row"><span>UNTRAINED SPEECH, FILLER RATE</span><b>6–10 / 100W</b></div>
+        <div class="ds-row"><span>WHAT LISTENERS HEAR AT THAT RATE</span><b>NOISE</b></div>
+        <div class="ds-row"><span>TRAINING DOSE REQUIRED, DAILY</span><b>90 SEC</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 02 DRILLS ============ -->
+  <section class="sec" id="s2">
+    <header class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>DRILLS</h2>
+      <span class="sec-rule"></span>
+    </header>
+
+    <div class="module-grid">
+      <article class="module">
+        <header class="module-head"><span>SPRT-60</span><span>PACE</span></header>
+        <h3>SPRINT</h3>
+        <p>Sixty seconds against a prompt. Keep words moving. Trains generation speed: no stalls, no restarts.</p>
+        <div class="module-meta">
+          <span>DURATION <b>60s</b></span>
+          <span>SCORED ON <b>WPM</b></span>
+        </div>
+        <button class="run-btn" data-open-console="sprint">RUN ▸</button>
+      </article>
+
+      <article class="module">
+        <header class="module-head"><span>FLLR-45</span><span>SIGNAL/NOISE</span></header>
+        <h3>FILLER HUNT</h3>
+        <p>A live counter increments on every "like", "basically", "I mean". You will learn to hear them before you say them.</p>
+        <div class="module-meta">
+          <span>DURATION <b>45s</b></span>
+          <span>SCORED ON <b>FILL/100W</b></span>
+        </div>
+        <button class="run-btn" data-open-console="filler">RUN ▸</button>
+      </article>
+
+      <article class="module">
+        <header class="module-head"><span>DSTL-30</span><span>COMPRESSION</span></header>
+        <h3>DISTILL</h3>
+        <p>One idea, thirty seconds, hard stop. Trains the TL;DR reflex that voice interfaces reward.</p>
+        <div class="module-meta">
+          <span>DURATION <b>30s</b></span>
+          <span>SCORED ON <b>ECONOMY</b></span>
+        </div>
+        <button class="run-btn" data-open-console="distill">RUN ▸</button>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ 03 TELEMETRY ============ -->
+  <section class="sec" id="s3">
+    <header class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>TELEMETRY</h2>
+      <span class="sec-rule"></span>
+    </header>
+
+    <p class="sec-lede">Every rep is measured in-browser by your machine's speech engine.
+    Three signals, one composite score.</p>
+
+    <div class="tele-grid">
+      <div class="tele panel">
+        <header class="panel-head"><span>SIG/01</span><span>PACE</span></header>
+        <div class="tele-big"><b data-count="160">0</b><span>WPM TARGET BAND 130–190</span></div>
+        <p>Below 110 reads as hesitant. Above 210, articulation degrades. The band is where authority lives.</p>
+      </div>
+      <div class="tele panel">
+        <header class="panel-head"><span>SIG/02</span><span>FILLERS</span></header>
+        <div class="tele-big"><b data-count="2">0</b><span>PER 100 WORDS, TARGET &lt;2</span></div>
+        <p>Each filler is a packet of nothing. Replace with silence: pauses read as thought, fillers read as doubt.</p>
+      </div>
+      <div class="tele panel">
+        <header class="panel-head"><span>SIG/03</span><span>STALLS</span></header>
+        <div class="tele-big"><b data-count="0">0</b><span>GAPS &gt;2 SEC, TARGET 0</span></div>
+        <p>Dead air means the sentence was launched without a landing site. Decide the ending first.</p>
+      </div>
+    </div>
+
+    <div class="score-formula">
+      <span class="microlabel">COMPOSITE</span>
+      <p>COGENCY = w₁·PACE + w₂·CLEANLINESS + w₃·FLOW <span class="volt">→ 0–100</span></p>
+    </div>
+  </section>
+
+  <!-- ============ 04 PROTOCOL ============ -->
+  <section class="sec" id="s4">
+    <header class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>PROTOCOL</h2>
+      <span class="sec-rule"></span>
+    </header>
+
+    <ol class="proto">
+      <li>
+        <span class="proto-num">P/1</span>
+        <div><h3>CALIBRATE</h3><p>Run one Sprint cold. That score is your baseline. Do not warm up; the ugly number is the useful one.</p></div>
+      </li>
+      <li>
+        <span class="proto-num">P/2</span>
+        <div><h3>DOSE DAILY</h3><p>One drill per day, rotating. Ninety seconds. Consistency beats duration by an embarrassing margin.</p></div>
+      </li>
+      <li>
+        <span class="proto-num">P/3</span>
+        <div><h3>READ THE TAPE</h3><p>Your transcript flags every filler. Read it once out loud, clean. That re-read is half the training effect.</p></div>
+      </li>
+      <li>
+        <span class="proto-num">P/4</span>
+        <div><h3>DEPLOY</h3><p>Dictate your next message to an AI instead of typing it. Field conditions are the final drill.</p></div>
+      </li>
+    </ol>
+
+    <div class="final-cta">
+      <p class="final-line">VOICE IS THE NEW KEYBOARD.<br><span class="ghost">CALIBRATE YOURS.</span></p>
+      <button class="cta cta-big" data-open-console>OPEN CONSOLE <span>→</span></button>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>CADENCE/LAB v2.0</span>
+    <span>SPEECH ENGINE: LOCAL BROWSER API · NOTHING UPLOADED · HISTORY ON-DEVICE</span>
+    <span>BEST IN CHROME</span>
+  </footer>
+</main>
+
+<!-- ============ CONSOLE OVERLAY ============ -->
+<div class="console" id="console" hidden>
+  <div class="con-window">
+    <header class="con-titlebar">
+      <div class="con-dots"><i></i><i></i><i></i></div>
+      <span id="conTitle">CADENCE CONSOLE — SELECT DRILL</span>
+      <button id="conClose" aria-label="Close console">ESC ✕</button>
+    </header>
+
+    <div class="con-tabs">
+      <button class="con-tab active" data-view="drills">DRILLS</button>
+      <button class="con-tab" data-view="progress">LOG</button>
+    </div>
+
+    <!-- VIEW: picker -->
+    <section class="cview" id="view-drills">
+      <p class="con-prompt-line">&gt; select drill_module <span class="cursor">▊</span></p>
+      <p class="con-streak" id="streakLine">// no sessions on record. first run sets baseline.</p>
+      <div class="con-pick">
+        <button class="con-pick-row" data-start="sprint">
+          <span class="cp-id">SPRT-60</span><span class="cp-name">SPRINT</span><span class="cp-desc">pace under pressure</span><span class="cp-run">RUN ▸</span>
+        </button>
+        <button class="con-pick-row" data-start="filler">
+          <span class="cp-id">FLLR-45</span><span class="cp-name">FILLER HUNT</span><span class="cp-desc">kill the noise words</span><span class="cp-run">RUN ▸</span>
+        </button>
+        <button class="con-pick-row" data-start="distill">
+          <span class="cp-id">DSTL-30</span><span class="cp-name">DISTILL</span><span class="cp-desc">one idea, one breath</span><span class="cp-run">RUN ▸</span>
+        </button>
+      </div>
+      <p class="mic-warning" id="micWarning" hidden></p>
+    </section>
+
+    <!-- VIEW: session -->
+    <section class="cview" id="view-session" hidden>
+      <div class="con-session-head">
+        <span id="sessionMode">SPRT-60</span>
+        <button class="con-link" id="promptShuffle">[ SHUFFLE PROMPT ]</button>
+      </div>
+      <p class="con-prompt-line">&gt; prompt:</p>
+      <p class="con-prompt-text" id="promptText"></p>
+
+      <div class="con-stage">
+        <div class="con-timer">
+          <b id="timerNum">60</b>
+          <span>SEC</span>
+          <div class="con-timer-bar"><i id="timerBar"></i></div>
+        </div>
+        <canvas id="waveCanvas" width="720" height="140"></canvas>
+        <div class="con-livestats">
+          <div class="chip"><b id="liveWords">0</b><span>WORDS</span></div>
+          <div class="chip warn" id="liveFillerChip"><b id="liveFillerCount">0</b><span>FILLERS</span></div>
+        </div>
+      </div>
+
+      <div class="con-transcript" id="liveTranscript"><span class="lt-placeholder">// transcript buffer empty. press record.</span></div>
+
+      <div class="con-controls">
+        <button class="cta" id="recordBtn"><span class="rec-dot"></span><span id="recordBtnLabel">RECORD</span></button>
+        <button class="con-link" id="backToDrills">[ ← BACK ]</button>
+      </div>
+    </section>
+
+    <!-- VIEW: results -->
+    <section class="cview" id="view-results" hidden>
+      <p class="con-prompt-line">&gt; session complete. analyzing…</p>
+
+      <div class="res-grid">
+        <div class="res-score panel">
+          <header class="panel-head"><span>COGENCY</span><span id="scoreGradeTag">—</span></header>
+          <div class="res-score-num"><b id="scoreNum">0</b><span>/100</span></div>
+          <div class="res-score-bar"><i id="scoreBar"></i></div>
+          <p class="res-tip" id="scoreTip">—</p>
+        </div>
+        <div class="res-stats">
+          <div class="ds-row"><span>PACE</span><b><span id="statWpm">—</span> WPM</b></div>
+          <div class="ds-row"><span>FILLERS / 100 WORDS</span><b id="statFillers">—</b></div>
+          <div class="ds-row"><span>STALLS &gt; 2 SEC</span><b id="statPauses">—</b></div>
+          <div class="ds-row"><span>TOTAL WORDS</span><b id="statWords">—</b></div>
+        </div>
+      </div>
+
+      <div class="con-transcript res-transcript">
+        <p class="microlabel">TAPE // FILLERS FLAGGED</p>
+        <p id="resultTranscript">—</p>
+      </div>
+
+      <div class="con-controls">
+        <button class="cta" id="againBtn">RE-RUN ▸</button>
+        <button class="con-link" id="resultsToDrills">[ DRILL SELECT ]</button>
+      </div>
+    </section>
+
+    <!-- VIEW: progress -->
+    <section class="cview" id="view-progress" hidden>
+      <p class="con-prompt-line">&gt; tail -f cogency.log</p>
+      <p class="con-streak" id="progressSummary">// no sessions on record.</p>
+      <div class="chart-wrap panel">
+        <header class="panel-head"><span>SCORE HISTORY</span><span>LAST 40</span></header>
+        <canvas id="historyChart" width="760" height="220"></canvas>
+      </div>
+      <div class="history-list" id="historyList"></div>
+    </section>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

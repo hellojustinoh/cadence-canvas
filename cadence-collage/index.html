@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadence — train your voice to think out loud</title>
+<meta name="description" content="A friendly voice coach in your browser. Daily speaking drills with real scores: pace, fillers, and flow. For the voice-first era.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=Inter+Tight:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <a class="logo" href="#top">cadence</a>
+  <div class="nav-links">
+    <a href="#drills">Drills</a>
+    <a href="#method">Method</a>
+    <a href="#scoring">Scoring</a>
+    <a href="#voices">Voices</a>
+  </div>
+  <div class="nav-ctas">
+    <button class="btn btn-outline" data-open-trainer>Log a session</button>
+    <button class="btn btn-solid" data-open-trainer>Start free drill</button>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <a class="announce" href="#drills">
+    <span class="announce-tag">New drill</span>
+    Filler Hunt: find out what "basically" is costing you <b>→</b>
+  </a>
+
+  <h1 class="hero-h1">Train your voice to<br><span class="underlined">think out loud</span></h1>
+
+  <p class="hero-sub">Cadence is a friendly coach for the voice-first era. Two-minute speaking
+  drills, honest scores, and a transcript that shows you exactly where the "ums" live.</p>
+
+  <div class="hero-ctas">
+    <button class="btn btn-solid btn-lg" data-open-trainer>Start a 60-second drill</button>
+    <button class="btn btn-outline btn-lg" data-open-trainer="filler">Try Filler Hunt</button>
+  </div>
+  <p class="hero-note">Free, no account, runs entirely in your browser</p>
+
+  <!-- doodles -->
+  <svg class="doodle doodle-star1" viewBox="0 0 60 60"><path d="M30 4 L36 24 L56 30 L36 36 L30 56 L24 36 L4 30 L24 24 Z"/></svg>
+  <svg class="doodle doodle-star2" viewBox="0 0 60 60"><path d="M30 4 L36 24 L56 30 L36 36 L30 56 L24 36 L4 30 L24 24 Z"/></svg>
+  <svg class="doodle doodle-arrow" viewBox="0 0 120 80"><path d="M8 12 C 50 8, 90 28, 104 62 M104 62 l-16 -7 M104 62 l3 -17" fill="none"/></svg>
+
+  <!-- hero collage: transcript card + stickers -->
+  <div class="hero-collage">
+    <div class="collage-card">
+      <div class="cc-head">
+        <span class="cc-dot"></span><span class="cc-dot"></span><span class="cc-dot"></span>
+        <span class="cc-title">sprint-drill.transcript</span>
+      </div>
+      <p class="cc-body">So <mark>basically</mark> the idea is, <mark>like</mark>, we let people
+      talk to the app instead of typing, and <mark>um</mark> it turns out everyone is,
+      <mark>you know</mark>, kind of bad at it at first…</p>
+      <div class="cc-score">
+        <div><b>71</b><span>score</span></div>
+        <div><b>148</b><span>wpm</span></div>
+        <div><b>5</b><span>fillers</span></div>
+      </div>
+    </div>
+    <span class="sticker sticker-1">um ×3 😬</span>
+    <span class="sticker sticker-2">like ×5</span>
+    <span class="sticker sticker-3">+12 pts this week!</span>
+  </div>
+</header>
+
+<!-- ============ DRILL CARDS ============ -->
+<section class="sec" id="drills">
+  <h2 class="sec-h">Three little drills,<br>one big upgrade</h2>
+  <p class="sec-sub">Each one takes less time than brewing coffee. Do one a day.</p>
+
+  <div class="cards3">
+    <article class="pcard pcard-mint">
+      <h3>Sprint</h3>
+      <div class="pcard-art">
+        <svg viewBox="0 0 160 110">
+          <circle cx="60" cy="55" r="34" fill="none"/>
+          <path d="M60 35 v20 l14 9" fill="none"/>
+          <path d="M104 30 l26 -8 M106 55 h28 M104 80 l26 8" fill="none"/>
+          <path d="M30 14 l4 10 M140 96 l-3 -9" fill="none" class="spark"/>
+        </svg>
+      </div>
+      <p>Sixty seconds against the clock. Keep the words coming, no stalling allowed. Builds raw speaking pace.</p>
+      <button class="cardlink" data-open-trainer="sprint">Try Sprint <b>→</b></button>
+    </article>
+
+    <article class="pcard pcard-pink">
+      <h3>Filler Hunt</h3>
+      <div class="pcard-art">
+        <svg viewBox="0 0 160 110">
+          <path d="M55 85 V45 a25 25 0 0 1 50 0 v40 l-10 -8 -10 8 -10 -8 -10 8 -10 -8 Z" fill="none"/>
+          <circle cx="70" cy="48" r="3.5" class="fill"/>
+          <circle cx="90" cy="48" r="3.5" class="fill"/>
+          <path d="M30 30 l-8 -8 M130 30 l8 -8 M30 70 l-10 4 M130 70 l10 4" fill="none" class="spark"/>
+        </svg>
+      </div>
+      <p>A live counter catches every "like", "um" and "basically" as it leaves your mouth. Awareness is the cure.</p>
+      <button class="cardlink" data-open-trainer="filler">Try Filler Hunt <b>→</b></button>
+    </article>
+
+    <article class="pcard pcard-sky">
+      <h3>Distill</h3>
+      <div class="pcard-art">
+        <svg viewBox="0 0 160 110">
+          <circle cx="80" cy="55" r="38" fill="none"/>
+          <circle cx="80" cy="55" r="22" fill="none"/>
+          <circle cx="80" cy="55" r="6" class="fill"/>
+          <path d="M118 18 l14 -10 M118 18 l-2 -12 M118 18 l12 2" fill="none" class="spark"/>
+        </svg>
+      </div>
+      <p>One idea, thirty seconds, hard stop. The TL;DR reflex that makes you sound like you rehearsed.</p>
+      <button class="cardlink" data-open-trainer="distill">Try Distill <b>→</b></button>
+    </article>
+  </div>
+</section>
+
+<!-- ============ METHOD ROWS ============ -->
+<section class="sec" id="method">
+  <h2 class="sec-h">Why out loud?</h2>
+  <p class="sec-sub">Because voice is becoming the keyboard, and nobody taught us to type with our mouths.</p>
+
+  <div class="row">
+    <div class="row-text">
+      <span class="row-tag tag-mint">The math</span>
+      <h3>You speak 5× faster than you type</h3>
+      <p>Around 220 words a minute speaking versus 45 typing. Every voice interface, from Claude to Siri to
+      Wispr Flow, is a bet on that gap. Cadence trains you to actually cash it in.</p>
+    </div>
+    <div class="row-panel panel-butter">
+      <div class="bigstat"><b>220</b><span>wpm talking</span></div>
+      <div class="bigstat bigstat-small"><b>45</b><span>wpm typing</span></div>
+    </div>
+  </div>
+
+  <div class="row row-flip">
+    <div class="row-text">
+      <span class="row-tag tag-pink">The catch</span>
+      <h3>Speed is worthless if it arrives as a ramble</h3>
+      <p>The keyboard let you edit before anyone saw your words. Voice has no backspace.
+      The edit has to happen in your head, and that is a trainable skill, not a personality trait.</p>
+    </div>
+    <div class="row-panel panel-lavender">
+      <p class="quotecard">"So basically what I was trying to say is, like, the thing we talked about,
+      you know the one…"<span>nobody, ever again, hopefully</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCORING ============ -->
+<section class="sec" id="scoring">
+  <h2 class="sec-h">An honest little scoreboard</h2>
+  <p class="sec-sub">Your browser does the listening. Three signals become one score out of 100.</p>
+  <div class="score-strip">
+    <div class="ss-item"><span class="ss-emoji">🏃</span><b>Pace</b><p>130–190 wpm is the confident zone. We nudge you into it.</p></div>
+    <div class="ss-item"><span class="ss-emoji">🧹</span><b>Cleanliness</b><p>Fillers per 100 words. Under 2 and you sound rehearsed.</p></div>
+    <div class="ss-item"><span class="ss-emoji">🌊</span><b>Flow</b><p>Stalls over 2 seconds. Pauses are fine. Freezes are not.</p></div>
+  </div>
+</section>
+
+<!-- ============ VOICES / TESTIMONIALS ============ -->
+<section class="sec" id="voices">
+  <h2 class="sec-h">Future you, probably</h2>
+  <div class="notes">
+    <div class="note note-butter"><p>"I dictate whole emails now. First take. My keyboard is decorative."</p><span>the reformed over-typer</span></div>
+    <div class="note note-mint"><p>"My standup update went from 4 minutes to 40 seconds and people thanked me."</p><span>the ex-rambler</span></div>
+    <div class="note note-pink"><p>"I heard myself say 'basically' and physically swallowed it. Growth."</p><span>the recovering qualifier</span></div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="finale">
+  <svg class="doodle doodle-star3" viewBox="0 0 60 60"><path d="M30 4 L36 24 L56 30 L36 36 L30 56 L24 36 L4 30 L24 24 Z"/></svg>
+  <h2>Say something.</h2>
+  <p>Your first drill takes sixty seconds. The mic is right there.</p>
+  <button class="btn btn-solid btn-lg" data-open-trainer>Start talking</button>
+</section>
+
+<footer class="footer">
+  <a class="logo" href="#top">cadence</a>
+  <p>A voice gym for the AI era. Speech recognition runs locally in your browser. Nothing uploaded, ever. Works best in Chrome.</p>
+</footer>
+
+<!-- ============ TRAINER OVERLAY ============ -->
+<div class="trainer" id="trainer" hidden>
+  <div class="trainer-top">
+    <a href="#top" class="logo" id="trainerLogo">cadence</a>
+    <div class="t-tabs">
+      <button class="ttab active" data-view="drills">Drills</button>
+      <button class="ttab" data-view="progress">Progress</button>
+    </div>
+    <button class="t-close" id="trainerClose" aria-label="Close">✕</button>
+  </div>
+
+  <!-- picker -->
+  <section class="tview" id="view-drills">
+    <h2 class="tv-h">What are we training today?</h2>
+    <p class="tv-sub" id="streakLine">First session, let's get a baseline.</p>
+    <div class="pick-row">
+      <button class="pick pick-mint" data-start="sprint"><b>Sprint</b><i>60 sec · pace</i><span>→</span></button>
+      <button class="pick pick-pink" data-start="filler"><b>Filler Hunt</b><i>45 sec · cleanliness</i><span>→</span></button>
+      <button class="pick pick-sky" data-start="distill"><b>Distill</b><i>30 sec · one idea</i><span>→</span></button>
+    </div>
+    <p class="mic-warning" id="micWarning" hidden></p>
+  </section>
+
+  <!-- session -->
+  <section class="tview" id="view-session" hidden>
+    <p class="s-mode" id="sessionMode">Sprint</p>
+    <div class="prompt-card">
+      <p class="pc-kicker">Your prompt</p>
+      <p class="pc-text" id="promptText"></p>
+      <button class="pc-shuffle" id="promptShuffle">↻ shuffle</button>
+    </div>
+
+    <div class="stage">
+      <div class="timer-wrap">
+        <svg viewBox="0 0 120 120" class="ring-svg">
+          <circle cx="60" cy="60" r="54" class="ring-bg"/>
+          <circle cx="60" cy="60" r="54" class="ring-arc" id="timerArc"/>
+        </svg>
+        <div class="timer-num" id="timerNum">60</div>
+      </div>
+      <canvas id="waveCanvas" width="640" height="130"></canvas>
+      <div class="live-chip" id="liveFillerChip"><b id="liveFillerCount">0</b><span>fillers</span></div>
+    </div>
+
+    <div class="live-transcript" id="liveTranscript"><span class="lt-placeholder">Your words will appear here…</span></div>
+
+    <div class="controls">
+      <button class="btn btn-solid btn-lg" id="recordBtn"><span id="recordBtnLabel">● Record</span></button>
+      <button class="btn btn-outline" id="backToDrills">← drills</button>
+    </div>
+  </section>
+
+  <!-- results -->
+  <section class="tview" id="view-results" hidden>
+    <h2 class="tv-h">Here's how that went</h2>
+    <div class="score-hero">
+      <div class="score-ring-wrap">
+        <svg viewBox="0 0 120 120" class="ring-svg">
+          <circle cx="60" cy="60" r="54" class="ring-bg"/>
+          <circle cx="60" cy="60" r="54" class="ring-arc score-arc" id="scoreArc"/>
+        </svg>
+        <div class="score-num"><b id="scoreNum">0</b><span>/100</span></div>
+      </div>
+      <div class="score-blurb">
+        <h3 id="scoreGrade">…</h3>
+        <p id="scoreTip">…</p>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat stat-mint"><b id="statWpm">–</b><span>words / min</span></div>
+      <div class="stat stat-butter"><b id="statFillers">–</b><span>fillers / 100w</span></div>
+      <div class="stat stat-pink"><b id="statPauses">–</b><span>stalls &gt; 2s</span></div>
+      <div class="stat stat-sky"><b id="statWords">–</b><span>words total</span></div>
+    </div>
+
+    <div class="transcript-review">
+      <p class="pc-kicker">What you said <span class="hint">(fillers highlighted)</span></p>
+      <p id="resultTranscript">–</p>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-solid" id="againBtn">↻ Go again</button>
+      <button class="btn btn-outline" id="resultsToDrills">Pick another drill</button>
+    </div>
+  </section>
+
+  <!-- progress -->
+  <section class="tview" id="view-progress" hidden>
+    <h2 class="tv-h">Your curve</h2>
+    <p class="tv-sub" id="progressSummary">No sessions yet. The chart starts with your first one.</p>
+    <div class="chart-card">
+      <canvas id="historyChart" width="760" height="220"></canvas>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </section>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

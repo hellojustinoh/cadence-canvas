@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadence Design Canvas</title>
+<meta name="description" content="All six Cadence aesthetic treatments on one canvas. Leave feedback per version; the agent reads it, ships the change, and replies.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="tb-left">
+    <span class="tb-logo">◫ Cadence Design Canvas</span>
+    <span class="tb-hint">drag background to pan · scroll to zoom · comment on any frame</span>
+  </div>
+  <div class="tb-right">
+    <button class="tb-btn" id="copyFeedback" title="Copy all open feedback as a prompt for Claude">⧉ Copy open feedback</button>
+    <div class="tb-zoom">
+      <button class="tb-btn" id="zoomOut">−</button>
+      <span class="tb-zoomlevel" id="zoomLevel">100%</span>
+      <button class="tb-btn" id="zoomIn">+</button>
+      <button class="tb-btn" id="zoomFit">Fit</button>
+    </div>
+  </div>
+</header>
+
+<div class="agent-strip" id="agentStrip">
+  <span class="as-dot"></span>
+  <span id="agentStripText">Feedback loop: comments save to <code>canvas/feedback.json</code>. Tell Claude <b>"process the canvas feedback"</b> and it will ship each change, mark it done, and reply here.</span>
+</div>
+
+<div id="viewport">
+  <div id="world"></div>
+</div>
+
+<template id="frameTpl">
+  <section class="frame">
+    <header class="frame-head">
+      <div class="fh-left">
+        <b class="fh-name"></b>
+        <span class="fh-desc"></span>
+      </div>
+      <div class="fh-actions">
+        <span class="fh-badge" hidden>0</span>
+        <button class="fh-btn fh-reload" title="Reload preview">↻</button>
+        <a class="fh-btn fh-open" title="Open full size" target="_blank" rel="noopener">↗</a>
+      </div>
+    </header>
+    <div class="frame-screen">
+      <iframe loading="lazy" title=""></iframe>
+    </div>
+    <div class="frame-comments">
+      <div class="fc-list"></div>
+      <form class="fc-form">
+        <input type="text" placeholder="Feedback for this version…" maxlength="500">
+        <button type="submit">➤</button>
+      </form>
+    </div>
+  </section>
+</template>
+
+<script src="app.js"></script>
+</body>
+</html>
