@@ -152,19 +152,48 @@ async function api(path, body) {
   const res = await fetch(path, body
     ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
     : undefined);
+  // On a static host there's no Python backend: the request 404s with an HTML
+  // page rather than JSON. Treat that as "no API" so the canvas goes read-only.
+  if (!res.ok || !(res.headers.get('content-type') || '').includes('application/json')) {
+    throw new Error('no-api');
+  }
   return res.json();
 }
 
 let lastSerialized = '';
+let apiLive = null; // null = unknown, true = live (server.py), false = static/read-only
 
 async function refresh() {
   let items;
   try { items = await api('/api/feedback'); }
-  catch { return; }
+  catch { if (apiLive !== false) enterReadOnly(); return; }
+  apiLive = true;
   const ser = JSON.stringify(items);
   if (ser === lastSerialized) return;
   lastSerialized = ser;
   renderComments(items);
+}
+
+// Static deploy (no canvas/server.py): disable input, keep the board browsable.
+function enterReadOnly() {
+  apiLive = false;
+  clearInterval(pollTimer);
+  $$('.fc-form').forEach(form => {
+    const input = $('input', form);
+    const btn = $('button', form);
+    input.disabled = true;
+    btn.disabled = true;
+    input.placeholder = 'Read-only preview — run canvas/server.py to leave feedback';
+  });
+  const copyBtn = $('#copyFeedback');
+  if (copyBtn) copyBtn.disabled = true;
+  const dot = $('.as-dot');
+  if (dot) dot.style.background = 'var(--faint)';
+  const strip = $('#agentStripText');
+  if (strip) strip.innerHTML =
+    'Read-only preview. The feedback loop runs when the canvas is served by ' +
+    '<code>canvas/server.py</code> — clone the repo and run ' +
+    '<code>python3 canvas/server.py 4190</code>.';
 }
 
 function renderComments(items) {
@@ -202,7 +231,7 @@ function renderComments(items) {
   });
 }
 
-setInterval(refresh, 4000);
+const pollTimer = setInterval(refresh, 4000);
 
 /* ============================================================
    4. COPY OPEN FEEDBACK AS A PROMPT
