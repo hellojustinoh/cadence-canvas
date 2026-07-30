@@ -1,0 +1,9 @@
+# The public site is only the collage (v4) app.
+# Everything here stays in the Git repo but is NOT published:
+# the design canvas and the other aesthetic variants.
+canvas
+cadence
+cadence-lab
+cadence-toybox
+cadence-retro
+cadence-anime
