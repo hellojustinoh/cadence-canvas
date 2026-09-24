@@ -1,5 +1,5 @@
 /* ============================================================
-   CADENCE COLLAGE — app.js
+   CADENCE COLLAGE · app.js
    Same trainer engine, friendly-editorial UI (ring timer).
    ============================================================ */
 
