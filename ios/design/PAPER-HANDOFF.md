@@ -61,12 +61,18 @@ the transcript. Wordmark "cadence" bottom left, display 32. No URL.
 **04 References.** Place the 26 Mobbin screenshots in five rows matching the
 moodboard sections, each with the app name as a micro label.
 
-## Prompt for the desktop session
+## Building it locally
 
-> Open the Paper connector and create a new project called "Cadence iOS".
-> Build it from `ios/design/PAPER-HANDOFF.md` and `ios/design/tokens.json`
-> on branch `claude/quirky-babbage-3d2e1r` of hellojustinoh/cadence-canvas.
-> Pages 01 through 03 first, exactly as specified. For page 04, download
-> the screenshots referenced in `ios/design/DESIGN-BRIEF.md` from their
-> Mobbin links. Use Instrument Serif for display type and SF Pro for
-> everything else.
+Paper runs on your Mac, so the build happens in a local Claude Code session,
+not a cloud one.
+
+1. Install Paper Desktop from https://paper.design/downloads and open it once.
+2. Check out this branch and open the repo in Claude Code on the desktop
+   (or run `claude` in the repo). `.mcp.json` registers Paper's MCP server
+   (`~/.paper/bin/paper mcp`); approve it when prompted and confirm with `/mcp`.
+3. With Paper Desktop open and a file loaded, run `/paper-build`. It reads
+   this file, `tokens.json` and `DESIGN-BRIEF.md`, uses
+   `ios/design/reference-canvas/` for exact copy and geometry, builds pages 01
+   and 02, and stops for review before 03 and 04.
+
+Reference build of pages 01 and 02: https://claude.ai/artifact/BY1KTiAR8iatQQZirH1C8z

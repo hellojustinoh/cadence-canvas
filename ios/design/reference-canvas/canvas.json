@@ -1,0 +1,31 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-09-25T03:10:00Z" },
+  "title": "Cadence iOS",
+  "launch": { "view": "canvas" },
+  "pages": [
+    { "id": "p01", "name": "01 Foundations" },
+    { "id": "p02", "name": "02 Screens" }
+  ],
+  "boards": {
+    "Main.dc.html":        { "x": 0,    "y": 0,    "w": 1240, "h": 340,  "title": "Swatches",        "page": "p01" },
+    "Type.dc.html":        { "x": 0,    "y": 460,  "w": 1240, "h": 1000, "title": "Type specimen",   "page": "p01" },
+    "Components.dc.html":  { "x": 0,    "y": 1580, "w": 1240, "h": 760,  "title": "Components",      "page": "p01" },
+    "Onboarding1.dc.html": { "x": 0,    "y": 0,    "w": 393,  "h": 852,  "title": "1 · Onboarding 1", "page": "p02" },
+    "Onboarding2.dc.html": { "x": 473,  "y": 0,    "w": 393,  "h": 852,  "title": "2 · Onboarding 2", "page": "p02" },
+    "Today.dc.html":       { "x": 946,  "y": 0,    "w": 393,  "h": 852,  "title": "3 · Today",        "page": "p02" },
+    "Session.dc.html":     { "x": 1419, "y": 0,    "w": 393,  "h": 852,  "title": "4 · Session",      "page": "p02" },
+    "Results.dc.html":     { "x": 1892, "y": 0,    "w": 393,  "h": 852,  "title": "5 · Results",      "page": "p02" },
+    "Progress.dc.html":    { "x": 2365, "y": 0,    "w": 393,  "h": 852,  "title": "6 · Progress",     "page": "p02" }
+  },
+  "order": [
+    "Main.dc.html", "Type.dc.html", "Components.dc.html",
+    "Onboarding1.dc.html", "Onboarding2.dc.html", "Today.dc.html",
+    "Session.dc.html", "Results.dc.html", "Progress.dc.html"
+  ],
+  "notes": {
+    "t01": { "x": 0, "y": -300, "text": "01 Foundations", "kind": "title1", "maxW": 1240, "page": "p01" },
+    "t02": { "x": 0, "y": -300, "text": "02 Screens · iPhone 15 Pro · 393 × 852", "kind": "title1", "maxW": 2758, "page": "p02" }
+  },
+  "designSystems": []
+}
