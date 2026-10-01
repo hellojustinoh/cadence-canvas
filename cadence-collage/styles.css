@@ -628,7 +628,6 @@ button { font-family: var(--sans); cursor: pointer; }
 .lt-placeholder { color: var(--navy-35); font-style: italic; }
 .live-transcript:has(.lt-mic) { background: var(--butter); border-left: 4px solid var(--tomato); }
 .lt-mic { color: var(--navy); font-weight: 500; }
-@media (max-width: 760px) { .controls { padding-bottom: env(safe-area-inset-bottom, 0); } }
 .live-transcript mark, .transcript-review mark {
   background: var(--pink);
   border-radius: 4px;
@@ -641,7 +640,7 @@ button { font-family: var(--sans); cursor: pointer; }
 #recordBtn.recording { background: var(--navy); border-color: var(--navy); }
 
 /* PRD-9: results of a cut-off drill */
-.view-results-cut .score-ring-wrap, .cut-off .score-ring-wrap { opacity: 0.35; }
+.cut-off .score-ring-wrap { opacity: 0.35; }
 
 /* results */
 .score-hero {

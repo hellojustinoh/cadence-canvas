@@ -78,7 +78,7 @@ const BUILD = (() => {
 })();
 const FLAG_DEFAULTS = {
   directStart: false,     // PRD-1 hero CTA lands on Sprint
-  clockOnSpeech: false,   // PRD-3 timer arms on the first word
+  clockOnSpeech: false,   // PRD-3 stalls and wpm are measured from the first word (the ring still counts from Record)
   cleanCurve: false,      // PRD-4 cleanliness matches the copy
   micRetryInline: false,  // PRD-6 mic denied keeps the session screen
   interruptedGuard: false,// PRD-9 a drill cut off by a hide/lock is not scored or saved
@@ -260,6 +260,14 @@ async function beginSession() {
   const lang = (navigator.language || '').toLowerCase();
   rec.lang = FLAGS.recognitionLocale && lang.startsWith('en') ? navigator.language : 'en-US';
   rec.onresult = onSpeechResult;
+  rec.onerror = e => {
+    // an unsupported regional model would otherwise restart forever with no words; fall back to en-US once
+    if (e.error === 'language-not-supported' && rec.lang !== 'en-US') { rec.lang = 'en-US'; return; }
+    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+      state.running = false;
+      $('#liveTranscript').innerHTML = '<span class="lt-mic">Speech recognition was blocked. Allow the mic for this site, then tap Record again.</span>';
+    }
+  };
   rec.onend = () => { if (state.running) { try { rec.start(); } catch {} } };
   rec.start();
   state.recognition = rec;
