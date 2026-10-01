@@ -70,6 +70,7 @@ const BUILD = (() => {
     const p = new URLSearchParams(location.search);
     const b = p.get('build');
     if (b) localStorage.setItem('cadence_build', b);
+    if (b === 'release') localStorage.removeItem('cadence_flags'); // release means release: drop hand edits too
     const f = p.get('flags');
     if (f !== null) localStorage.setItem('cadence_flags', f);
     return localStorage.getItem('cadence_build') || 'release';
@@ -132,9 +133,10 @@ function openTrainer(mode) {
 (function renderBuildBadge() {
   const el = $('#buildBadge');
   if (!el) return;
-  if (BUILD !== 'test') { el.hidden = true; return; }
-  const differs = Object.keys(FLAG_DEFAULTS).some(k => !FLAGS[k]);
-  el.textContent = differs ? 'test · edited' : 'test';
+  const anyOn = Object.keys(FLAGS).some(k => FLAGS[k]);
+  if (BUILD !== 'test' && !anyOn) { el.hidden = true; return; }
+  const differs = Object.keys(FLAG_DEFAULTS).some(k => FLAGS[k] !== (BUILD === 'test'));
+  el.textContent = BUILD === 'test' ? (differs ? 'test · edited' : 'test') : 'release · edited';
   el.title = Object.keys(FLAGS).map(k => `${k}: ${FLAGS[k] ? 'on' : 'off'}`).join('\n');
   el.hidden = false;
 })();
@@ -220,6 +222,7 @@ $('#recordBtn').addEventListener('click', () => {
 
 async function beginSession() {
   $('#liveTranscript').innerHTML = '<span class="lt-placeholder">Your words will appear here…</span>';
+  $('#micWarning').hidden = true;
   if (!SR) {
     micWarn("This browser doesn't support speech recognition. Chrome or Edge will.");
     showView('drills');
@@ -444,11 +447,11 @@ function showResults() {
   const arc = $('#scoreArc');
   arc.style.transition = 'none';
   arc.style.strokeDashoffset = CIRC;
+  if (cut) { $('#scoreNum').textContent = '–'; return; } // no sweep, no number, no save
   requestAnimationFrame(() => {
     arc.style.transition = '';
     arc.style.strokeDashoffset = CIRC * (1 - r.score / 100);
   });
-  if (cut) { $('#scoreNum').textContent = '–'; arc.style.strokeDashoffset = CIRC; return; }
   animateNumber($('#scoreNum'), r.score, 1100);
 
   saveSession(r);
