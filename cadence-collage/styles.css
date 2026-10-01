@@ -568,6 +568,8 @@ button { font-family: var(--sans); cursor: pointer; }
   border: 1px solid var(--sky-line);
   border-radius: var(--r);
 }
+/* PRD-2: when .stage stacks, the 560px flex-basis would become the canvas height */
+@media (max-width: 760px) { #waveCanvas { flex-basis: auto; } }
 .live-chip {
   position: absolute;
   top: -12px;
@@ -596,6 +598,9 @@ button { font-family: var(--sans); cursor: pointer; }
 }
 .live-transcript .interim { color: var(--navy-35); }
 .lt-placeholder { color: var(--navy-35); font-style: italic; }
+.live-transcript:has(.lt-mic) { background: var(--butter); border-left: 4px solid var(--tomato); }
+.lt-mic { color: var(--navy); font-weight: 500; }
+@media (max-width: 760px) { .controls { padding-bottom: env(safe-area-inset-bottom, 0); } }
 .live-transcript mark, .transcript-review mark {
   background: var(--pink);
   border-radius: 4px;

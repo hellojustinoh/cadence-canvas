@@ -60,9 +60,44 @@ const FILLER_RE = new RegExp(`\\b(${FILLERS.join('|')})\\b`, 'gi');
 
 const CIRC = 339.3; // 2π × 54
 
+/* ---------- build switch ----------
+   ?build=test turns every flag on and persists until ?build=release.
+   ?flags=a,-b overrides single flags (persisted). window.cadenceBuild shows the
+   result. Anything that changes scoring, onboarding, or notifications sits
+   behind one of these until it is switched on for release. */
+const BUILD = (() => {
+  try {
+    const p = new URLSearchParams(location.search);
+    const b = p.get('build');
+    if (b) localStorage.setItem('cadence_build', b);
+    const f = p.get('flags');
+    if (f !== null) localStorage.setItem('cadence_flags', f);
+    return localStorage.getItem('cadence_build') || 'release';
+  } catch { return 'release'; }
+})();
+const FLAG_DEFAULTS = {
+  directStart: false,     // PRD-1 hero CTA lands on Sprint
+  clockOnSpeech: false,   // PRD-3 timer arms on the first word
+  cleanCurve: false,      // PRD-4 cleanliness matches the copy
+  micRetryInline: false,  // PRD-6 mic denied keeps the session screen
+};
+const FLAGS = (() => {
+  const f = { ...FLAG_DEFAULTS };
+  if (BUILD === 'test') Object.keys(f).forEach(k => (f[k] = true));
+  let ov = '';
+  try { ov = localStorage.getItem('cadence_flags') || ''; } catch {}
+  ov.split(',').filter(Boolean).forEach(s => {
+    const off = s.startsWith('-');
+    const k = off ? s.slice(1) : s;
+    if (k in f) f[k] = !off;
+  });
+  return f;
+})();
+window.cadenceBuild = { build: BUILD, flags: FLAGS };
+
 const state = {
   mode: null, prompt: '', running: false, startedAt: 0, elapsed: 0,
-  finalTranscript: '', interim: '', lastResultAt: 0, longPauses: 0,
+  finalTranscript: '', interim: '', lastResultAt: 0, longPauses: 0, firstResultAt: 0,
   timerId: null, recognition: null, audioCtx: null, analyser: null,
   stream: null, rafId: null,
 };
@@ -90,6 +125,7 @@ function closeTrainer() {
 }
 function showView(name) {
   Object.entries(views).forEach(([k, el]) => (el.hidden = k !== name));
+  trainer.scrollTop = 0;
   $$('.ttab').forEach(t =>
     t.classList.toggle('active', t.dataset.view === (name === 'progress' ? 'progress' : 'drills'))
   );
@@ -97,7 +133,11 @@ function showView(name) {
 }
 
 $$('[data-open-trainer]').forEach(btn =>
-  btn.addEventListener('click', () => openTrainer(btn.dataset.openTrainer || null))
+  btn.addEventListener('click', () => {
+    // PRD-1: the hero CTA promises a 60-second drill, so land on Sprint.
+    const direct = FLAGS.directStart ? btn.dataset.openTrainerDirect : null;
+    openTrainer(direct || btn.dataset.openTrainer || null);
+  })
 );
 $('#trainerClose').addEventListener('click', closeTrainer);
 $('#trainerLogo').addEventListener('click', e => { e.preventDefault(); closeTrainer(); });
@@ -155,6 +195,7 @@ $('#recordBtn').addEventListener('click', () => {
 });
 
 async function beginSession() {
+  $('#liveTranscript').innerHTML = '<span class="lt-placeholder">Your words will appear here…</span>';
   if (!SR) {
     micWarn("This browser doesn't support speech recognition. Chrome or Edge will.");
     showView('drills');
@@ -163,6 +204,12 @@ async function beginSession() {
   try {
     state.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   } catch {
+    if (FLAGS.micRetryInline) {
+      // PRD-6: stay on the session screen; the message takes the transcript box's place, so Record never moves.
+      $('#liveTranscript').innerHTML =
+        '<span class="lt-mic">Cadence needs the mic to coach you. Allow it, then tap Record again.</span>';
+      return;
+    }
     micWarn('Cadence needs microphone access to coach you. Allow the mic and try again.');
     showView('drills');
     return;
@@ -170,7 +217,7 @@ async function beginSession() {
 
   Object.assign(state, {
     running: true, startedAt: performance.now(), elapsed: 0,
-    finalTranscript: '', interim: '', lastResultAt: performance.now(), longPauses: 0,
+    finalTranscript: '', interim: '', lastResultAt: performance.now(), longPauses: 0, firstResultAt: 0,
   });
 
   state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -196,7 +243,9 @@ async function beginSession() {
     const left = Math.max(0, total - state.elapsed);
     $('#timerNum').textContent = Math.ceil(left);
     $('#timerArc').style.strokeDashoffset = CIRC * (1 - left / total);
-    if (performance.now() - state.lastResultAt > 2000) {
+    // PRD-3: with clockOnSpeech, reading the prompt before the first word is not a stall.
+    const armed = !FLAGS.clockOnSpeech || state.firstResultAt > 0;
+    if (armed && performance.now() - state.lastResultAt > 2000) {
       state.longPauses++;
       state.lastResultAt = performance.now();
     }
@@ -206,6 +255,7 @@ async function beginSession() {
 
 function onSpeechResult(e) {
   state.lastResultAt = performance.now();
+  if (!state.firstResultAt) state.firstResultAt = state.lastResultAt;
   let interim = '';
   for (let i = e.resultIndex; i < e.results.length; i++) {
     const t = e.results[i][0].transcript;
@@ -295,7 +345,12 @@ function escapeHtml(s) {
 function scoreSession() {
   const text = state.finalTranscript.trim();
   const words = text ? text.split(/\s+/).length : 0;
-  const minutes = Math.max(state.elapsed, 5) / 60;
+  // PRD-3: with clockOnSpeech, pace is measured from the first word heard, not from the Record tap.
+  let spoken = state.elapsed;
+  if (FLAGS.clockOnSpeech && state.firstResultAt > 0) {
+    spoken = Math.min(spoken, (performance.now() - state.firstResultAt) / 1000);
+  }
+  const minutes = Math.max(spoken, 5) / 60;
   const wpm = Math.round(words / minutes);
   const fillers = countFillers(text);
   const fillerRate = words ? (fillers / words) * 100 : 0;
@@ -306,14 +361,21 @@ function scoreSession() {
   else if (wpm < 130) pace = Math.max(0, (wpm - 50) / (130 - 50)) * 100;
   else pace = Math.max(0, 1 - (wpm - 190) / 90) * 100;
 
-  const fillerScore = Math.max(0, 100 - fillerRate * 12);
+  // PRD-4: the copy promises "under 2 per 100 words and you sound rehearsed", so full marks up to 2.
+  const fillerScore = FLAGS.cleanCurve
+    ? Math.max(0, 100 - Math.max(0, fillerRate - 2) * 10)
+    : Math.max(0, 100 - fillerRate * 12);
   const pauseScore = Math.max(0, 100 - pauses * 18);
 
   const w = MODES[state.mode].weights;
   let score = Math.round(pace * w.pace + fillerScore * w.filler + pauseScore * w.pause);
   if (words < 10) score = Math.min(score, 25);
 
-  return { words, wpm, fillers, fillerRate: +fillerRate.toFixed(1), pauses, score };
+  const r = { words, wpm, fillers, fillerRate: +fillerRate.toFixed(1), pauses, score };
+  // scoring flags travel with the session so history stays comparable
+  if (FLAGS.clockOnSpeech) r.clockOnSpeech = true;
+  if (FLAGS.cleanCurve) r.cleanCurve = true;
+  return r;
 }
 
 function gradeFor(score) {

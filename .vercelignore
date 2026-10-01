@@ -7,3 +7,7 @@ cadence-lab
 cadence-toybox
 cadence-retro
 cadence-anime
+
+# Overnight working docs and the measurement harness are not part of the site.
+docs
+tools
