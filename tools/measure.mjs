@@ -21,6 +21,7 @@ const THINK = Number(args.think || 0);      // seconds of silence after Record b
 const RUNOUT = !!args.runout;               // let the timer run out instead of tapping Finish
 const DENIED = !!args.denied;               // first getUserMedia call rejects (mic denied), then allowed
 const MODE = args.mode || 'sprint';
+const HIDE = Number(args.hide || 0);        // seconds into the drill at which the page is hidden for 2 s (lock / app switch)
 
 // serve repo root
 const srv = spawn('python3', ['-m', 'http.server', String(PORT), '--bind', '127.0.0.1'], { cwd: new URL('..', import.meta.url).pathname, stdio: 'ignore' });
@@ -87,7 +88,16 @@ if (DENIED) {
 }
 const tRecord = Date.now();
 await page.waitForFunction(() => window.__srStarted != null, null, { timeout: 10000 });
-await page.waitForTimeout((THINK + SPEAK) * 1000);
+if (HIDE) {
+  await page.waitForTimeout(HIDE * 1000);
+  await page.evaluate(() => { Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true }); document.dispatchEvent(new Event('visibilitychange')); });
+  path.push(`[page hidden at ${HIDE}s]`);
+  await page.waitForTimeout(2000);
+  await page.evaluate(() => { Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true }); document.dispatchEvent(new Event('visibilitychange')); });
+  await page.waitForTimeout(Math.max(0, (THINK + SPEAK - HIDE - 2)) * 1000);
+} else {
+  await page.waitForTimeout((THINK + SPEAK) * 1000);
+}
 if (RUNOUT) {
   await page.waitForFunction(() => { const v = document.querySelector('#view-results'); return v && !v.hidden; }, null, { timeout: 90000 });
 } else {
@@ -101,9 +111,11 @@ const t1 = Date.now();
 await page.waitForTimeout(1400);
 const score = await page.textContent('#scoreNum');
 const stats = await page.evaluate(() => ({ wpm: +document.querySelector('#statWpm').textContent, fillerRate: +document.querySelector('#statFillers').textContent, stalls: +document.querySelector('#statPauses').textContent, words: +document.querySelector('#statWords').textContent }));
+const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('cadence_history_v1') || '[]').length);
+const grade = await page.textContent('#scoreGrade');
 const seconds = +((t1 - t0) / 1000).toFixed(2);
 const drillSeconds = RUNOUT ? (tRecord ? +((t1 - tRecord) / 1000).toFixed(1) : 0) : THINK + SPEAK;
-console.log(JSON.stringify({ label: LABEL, build: BUILD, mode: MODE, taps, seconds, overheadSeconds: +(seconds - drillSeconds).toFixed(2), score: Number(score), ...stats, path }));
+console.log(JSON.stringify({ label: LABEL, build: BUILD, mode: MODE, taps, seconds, overheadSeconds: +(seconds - drillSeconds).toFixed(2), score: score === '–' ? null : Number(score), grade, savedSessions: saved, ...stats, path }));
 if (args.shots) await page.screenshot({ path: `${args.shots}/99-results.png` });
 if (args.shot) await page.screenshot({ path: String(args.shot), fullPage: false });
 await browser.close(); srv.kill();

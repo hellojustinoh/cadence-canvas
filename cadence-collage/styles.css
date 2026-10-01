@@ -29,6 +29,13 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+/* a11y: honour the OS reduced-motion setting (twinkle, slide-in, chip bump, ring sweeps, smooth scroll) */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+/* a11y (flag contrastLabels): muted labels at ≥4.5:1 on white and the pastel cards */
+html[data-flags~="contrastLabels"] { --navy-35: rgba(27, 33, 80, 0.66); }
 body {
   background: var(--paper);
   color: var(--navy);
@@ -437,6 +444,27 @@ button { font-family: var(--sans); cursor: pointer; }
   color: var(--navy-60);
 }
 .ttab.active { background: var(--navy); color: #fff; }
+/* PRD-12: visible only on the test build; a tool marker pinned to the corner, outside the top bar
+   (the bar's backdrop-filter would otherwise become the containing block for position: fixed) */
+.build-badge {
+  position: fixed;
+  left: 10px;
+  bottom: 10px;
+  z-index: 101;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #8a6d1f;
+  background: rgba(255,255,255,0.9);
+  border: 1px dashed currentColor;
+  border-radius: 6px;
+  padding: 0.15em 0.5em;
+  white-space: nowrap;
+}
+.t-close { flex: none; }
+.build-badge[hidden] { display: none; }
+.tv-h:focus, .s-mode:focus { outline: none; }
 .t-close {
   width: 38px; height: 38px;
   border-radius: 50%;
@@ -611,6 +639,9 @@ button { font-family: var(--sans); cursor: pointer; }
 
 .controls { display: flex; justify-content: center; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
 #recordBtn.recording { background: var(--navy); border-color: var(--navy); }
+
+/* PRD-9: results of a cut-off drill */
+.view-results-cut .score-ring-wrap, .cut-off .score-ring-wrap { opacity: 0.35; }
 
 /* results */
 .score-hero {

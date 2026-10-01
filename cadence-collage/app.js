@@ -80,6 +80,11 @@ const FLAG_DEFAULTS = {
   clockOnSpeech: false,   // PRD-3 timer arms on the first word
   cleanCurve: false,      // PRD-4 cleanliness matches the copy
   micRetryInline: false,  // PRD-6 mic denied keeps the session screen
+  interruptedGuard: false,// PRD-9 a drill cut off by a hide/lock is not scored or saved
+  longHistory: false,     // PRD-10 keep 5000 sessions instead of 200
+  streakGrace: false,     // PRD-11 streak counts from yesterday until today's drill
+  contrastLabels: false,  // a11y: muted labels at 4.5:1 instead of 2.3:1
+  recognitionLocale: false,// locale: en-GB / en-SG / en-IN recognition instead of en-US for everyone
 };
 const FLAGS = (() => {
   const f = { ...FLAG_DEFAULTS };
@@ -94,10 +99,12 @@ const FLAGS = (() => {
   return f;
 })();
 window.cadenceBuild = { build: BUILD, flags: FLAGS };
+document.documentElement.dataset.build = BUILD;
+document.documentElement.dataset.flags = Object.keys(FLAGS).filter(k => FLAGS[k]).join(' ');
 
 const state = {
   mode: null, prompt: '', running: false, startedAt: 0, elapsed: 0,
-  finalTranscript: '', interim: '', lastResultAt: 0, longPauses: 0, firstResultAt: 0,
+  finalTranscript: '', interim: '', lastResultAt: 0, longPauses: 0, firstResultAt: 0, interrupted: false,
   timerId: null, recognition: null, audioCtx: null, analyser: null,
   stream: null, rafId: null,
 };
@@ -117,7 +124,20 @@ function openTrainer(mode) {
   renderStreak();
   if (mode && MODES[mode]) startSetup(mode);
   else showView('drills');
+  // a11y: the overlay is a dialog, so move focus into it instead of leaving it on the page behind
+  const heading = $('.tview:not([hidden]) .tv-h, .tview:not([hidden]) .s-mode');
+  if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
 }
+// PRD-12: the phone has no console, so say which build is running
+(function renderBuildBadge() {
+  const el = $('#buildBadge');
+  if (!el) return;
+  if (BUILD !== 'test') { el.hidden = true; return; }
+  const differs = Object.keys(FLAG_DEFAULTS).some(k => !FLAGS[k]);
+  el.textContent = differs ? 'test · edited' : 'test';
+  el.title = Object.keys(FLAGS).map(k => `${k}: ${FLAGS[k] ? 'on' : 'off'}`).join('\n');
+  el.hidden = false;
+})();
 function closeTrainer() {
   stopSession(true);
   trainer.hidden = true;
@@ -156,6 +176,10 @@ $('#promptShuffle').addEventListener('click', () => {
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !trainer.hidden) closeTrainer();
+});
+// PRD-9: a lock, call, or app switch stops the mic; the partial run must not be scored as a full one
+document.addEventListener('visibilitychange', () => {
+  if (FLAGS.interruptedGuard && state.running && document.visibilityState === 'hidden') state.interrupted = true;
 });
 
 /* ---------- setup ---------- */
@@ -217,7 +241,7 @@ async function beginSession() {
 
   Object.assign(state, {
     running: true, startedAt: performance.now(), elapsed: 0,
-    finalTranscript: '', interim: '', lastResultAt: performance.now(), longPauses: 0, firstResultAt: 0,
+    finalTranscript: '', interim: '', lastResultAt: performance.now(), longPauses: 0, firstResultAt: 0, interrupted: false,
   });
 
   state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -229,7 +253,9 @@ async function beginSession() {
   const rec = new SR();
   rec.continuous = true;
   rec.interimResults = true;
-  rec.lang = 'en-US';
+  // locale: Chrome has English models per region; en-SG, en-GB, en-IN hear local accents better than en-US
+  const lang = (navigator.language || '').toLowerCase();
+  rec.lang = FLAGS.recognitionLocale && lang.startsWith('en') ? navigator.language : 'en-US';
   rec.onresult = onSpeechResult;
   rec.onend = () => { if (state.running) { try { rec.start(); } catch {} } };
   rec.start();
@@ -398,13 +424,17 @@ function tipFor(r) {
 function showResults() {
   const r = scoreSession();
   showView('results');
+  const cut = FLAGS.interruptedGuard && state.interrupted;
+  $('#view-results').classList.toggle('cut-off', cut);
 
   $('#statWpm').textContent = r.wpm;
   $('#statFillers').textContent = r.fillerRate;
   $('#statPauses').textContent = r.pauses;
   $('#statWords').textContent = r.words;
-  $('#scoreGrade').textContent = gradeFor(r.score);
-  $('#scoreTip').textContent = tipFor(r);
+  $('#scoreGrade').textContent = cut ? 'That one got cut off.' : gradeFor(r.score);
+  $('#scoreTip').textContent = cut
+    ? 'The phone locked or switched away mid-drill, so the mic stopped. Score not saved. Your words are below.'
+    : tipFor(r);
 
   const transcript = state.finalTranscript.trim();
   $('#resultTranscript').innerHTML = transcript
@@ -418,6 +448,7 @@ function showResults() {
     arc.style.transition = '';
     arc.style.strokeDashoffset = CIRC * (1 - r.score / 100);
   });
+  if (cut) { $('#scoreNum').textContent = '–'; arc.style.strokeDashoffset = CIRC; return; }
   animateNumber($('#scoreNum'), r.score, 1100);
 
   saveSession(r);
@@ -439,7 +470,9 @@ const history = () => JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
 function saveSession(r) {
   const h = history();
   h.push({ at: Date.now(), mode: state.mode, ...r });
-  localStorage.setItem(STORE_KEY, JSON.stringify(h.slice(-200)));
+  // PRD-10: 200 sessions is seven months at one a day; 5000 is ~600 KB, well inside the 5 MB quota
+  const cap = FLAGS.longHistory ? 5000 : 200;
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(h.slice(-cap))); } catch {}
   renderStreak();
 }
 
@@ -450,10 +483,13 @@ function renderStreak() {
   const days = new Set(h.map(s => new Date(s.at).toDateString()));
   let streak = 0;
   const d = new Date();
+  // PRD-11: until today's drill is done, the streak is still alive from yesterday
+  const todayOpen = FLAGS.streakGrace && !days.has(d.toDateString());
+  if (todayOpen) d.setDate(d.getDate() - 1);
   while (days.has(d.toDateString())) { streak++; d.setDate(d.getDate() - 1); }
   const last = h[h.length - 1];
   el.textContent = streak > 1
-    ? `${streak} days in a row · last score ${last.score}/100`
+    ? (todayOpen ? `${streak} days in a row · keep it going today` : `${streak} days in a row · last score ${last.score}/100`)
     : `${h.length} session${h.length > 1 ? 's' : ''} logged · last score ${last.score}/100`;
 }
 

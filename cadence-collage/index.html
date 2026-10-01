@@ -189,7 +189,7 @@
 </footer>
 
 <!-- ============ TRAINER OVERLAY ============ -->
-<div class="trainer" id="trainer" hidden>
+<div class="trainer" id="trainer" role="dialog" aria-modal="true" aria-label="Cadence trainer" hidden>
   <div class="trainer-top">
     <a href="#top" class="logo" id="trainerLogo">cadence</a>
     <div class="t-tabs">
@@ -198,6 +198,7 @@
     </div>
     <button class="t-close" id="trainerClose" aria-label="Close">✕</button>
   </div>
+  <span class="build-badge" id="buildBadge" hidden>test build</span>
 
   <!-- picker -->
   <section class="tview" id="view-drills">
@@ -228,8 +229,8 @@
         </svg>
         <div class="timer-num" id="timerNum">60</div>
       </div>
-      <canvas id="waveCanvas" width="640" height="130"></canvas>
-      <div class="live-chip" id="liveFillerChip"><b id="liveFillerCount">0</b><span>fillers</span></div>
+      <canvas id="waveCanvas" width="640" height="130" aria-hidden="true"></canvas>
+      <div class="live-chip" id="liveFillerChip" aria-live="polite"><b id="liveFillerCount">0</b><span>fillers</span></div>
     </div>
 
     <div class="live-transcript" id="liveTranscript"><span class="lt-placeholder">Your words will appear here…</span></div>
@@ -280,7 +281,7 @@
     <h2 class="tv-h">Your curve</h2>
     <p class="tv-sub" id="progressSummary">No sessions yet. The chart starts with your first one.</p>
     <div class="chart-card">
-      <canvas id="historyChart" width="760" height="220"></canvas>
+      <canvas id="historyChart" width="760" height="220" role="img" aria-label="Score over your last 40 sessions"></canvas>
     </div>
     <div class="history-list" id="historyList"></div>
   </section>
