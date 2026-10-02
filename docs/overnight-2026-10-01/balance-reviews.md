@@ -59,3 +59,17 @@ Bugs it found, both fixed and verified in headless Chrome on all six skins:
 It also confirmed every port anchor landed in the right place, that retro's
 mic-denied path stays in its window, and that the editorial variant does
 not have the 560 px waveform bug (its stage never stacks into a column).
+
+## Review 4 (after the fixes) — NOTHING WORTH BUILDING
+Second dry review in a row; the loop stops. Both fixes hold; `stopSession`
+inside `rec.onerror` cannot re-enter `onend`. One side effect it could not
+rule out: Chrome Android reporting `not-allowed` when recognition restarts
+behind a locked screen, which would have shown "blocked" instead of the
+cut-off results. Mitigated: a block after words were heard now finishes the
+session normally; only a block before the first word shows the message.
+Noted, not built: a double tap on Record during the mic prompt can open a
+second stream (pre-existing, all skins).
+
+First phone check: on `?build=test`, start a Sprint, confirm words appear
+live, lock the phone mid-drill, come back: you should see the cut-off results
+with your words.

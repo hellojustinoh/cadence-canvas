@@ -233,6 +233,9 @@ async function beginSession() {
   rec.onresult = onSpeechResult;
   rec.onerror = e => {
     if (e.error === 'language-not-supported' && rec.lang !== 'en-US') { rec.lang = 'en-US'; return; }
+    // a block before the first word is a blocked recognizer; after words were heard, finish normally so the
+    // results (and the cut-off guard) show the transcript instead of wiping it
+    if ((e.error === 'not-allowed' || e.error === 'service-not-allowed') && state.firstResultAt > 0) { finishSession(); return; }
     if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
       stopSession(true); // mic stream, timer, waveform and audio context all go
       resetSessionUI(MODES[state.mode].seconds);
