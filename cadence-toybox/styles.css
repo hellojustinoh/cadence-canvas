@@ -680,3 +680,6 @@ button { font-family: var(--font); cursor: pointer; }
   border-radius: 999px;
   padding: 0.1em 0.7em;
 }
+
+/* mic-denied message shown in the transcript box (flag micRetryInline) */
+#liveTranscript .lt-mic { font-weight: 600; font-style: normal; }

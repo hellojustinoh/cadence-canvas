@@ -586,3 +586,6 @@ button { cursor: pointer; }
   background: repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0 1px, transparent 1px 3px);
   mix-blend-mode: multiply;
 }
+
+/* mic-denied message shown in the transcript box (flag micRetryInline) */
+#liveTranscript .lt-mic { font-weight: 600; font-style: normal; }

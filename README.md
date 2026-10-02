@@ -90,3 +90,12 @@ build step, no dependencies.
 ---
 
 🤖 Built with [Claude Code](https://claude.com/claude-code).
+
+## Build switch (collage app)
+
+All six apps share a flag block (`FLAG_DEFAULTS` in each `app.js`). Every
+flag is on by default since 2 Oct 2026. `?flags=-name` turns one off and
+persists; `?build=release` resets to the defaults and clears hand edits;
+`?build=test` is the same as the defaults until a new flag lands off. The flags, what each one changes and how
+it was measured are in `docs/overnight-2026-10-01/`. Harness:
+`NODE_PATH=/opt/node-tools/node_modules node tools/measure.mjs --build=test`.

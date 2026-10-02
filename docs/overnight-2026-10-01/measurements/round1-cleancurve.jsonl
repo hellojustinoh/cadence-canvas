@@ -1,0 +1,2 @@
+{"label":"release-distill-runout","build":"release","mode":"distill","taps":3,"seconds":31.12,"overheadSeconds":1.02,"score":88,"wpm":144,"fillerRate":2.8,"stalls":0,"words":72,"path":["hero: Start a 60-second drill","picker: distill","Record"]}
+{"label":"test-distill-runout-nodirect","build":"test","mode":"distill","taps":3,"seconds":31.32,"overheadSeconds":1.22,"score":97,"wpm":146,"fillerRate":2.8,"stalls":0,"words":72,"path":["hero: Start a 60-second drill","picker: distill","Record"]}

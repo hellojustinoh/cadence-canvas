@@ -1,0 +1,10 @@
+{"label":"cadence-anime-finish","app":"cadence-anime","build":"test","mode":"sprint","taps":3,"seconds":15.29,"overheadSeconds":3.29,"score":100,"grade":"SYNC NOMINAL — 適合","savedSessions":1,"wpm":154,"fillerRate":0,"stalls":0,"words":30,"path":["open: [data-open-trainer=\"sprint\"]","Record","Finish"]}
+{"label":"cadence-anime-think3","app":"cadence-anime","build":"test","mode":"sprint","taps":3,"seconds":18.39,"overheadSeconds":3.39,"score":100,"grade":"SYNC NOMINAL — 適合","savedSessions":1,"wpm":152,"fillerRate":0,"stalls":0,"words":30,"path":["open: [data-open-trainer=\"sprint\"]","Record","Finish"]}
+{"label":"cadence-anime-denied","app":"cadence-anime","build":"test","mode":"sprint","taps":4,"seconds":11.91,"overheadSeconds":3.91,"score":100,"grade":"SYNC NOMINAL — 適合","savedSessions":1,"wpm":141,"fillerRate":0,"stalls":0,"words":18,"path":["open: [data-open-trainer=\"sprint\"]","Record","[mic denied → on session screen]","Record again","Finish"]}
+{"label":"cadence-anime-hidden","app":"cadence-anime","build":"test","mode":"sprint","taps":3,"seconds":13.35,"overheadSeconds":3.35,"score":null,"grade":"SIGNAL LOST","savedSessions":0,"wpm":149,"fillerRate":0,"stalls":0,"words":24,"path":["open: [data-open-trainer=\"sprint\"]","Record","[page hidden at 4s]","Finish"]}
+Node.js v22.22.0
+Node.js v22.22.0
+Node.js v22.22.0
+Node.js v22.22.0
+{"label":"cadence-collage-finish-v2","app":"cadence-collage","build":"test","mode":"sprint","taps":3,"seconds":13.05,"overheadSeconds":1.05,"score":100,"grade":"Beautifully said.","savedSessions":1,"wpm":154,"fillerRate":0,"stalls":0,"words":30,"path":["open: .hero-ctas .btn-solid","Record","Finish"]}
+{"label":"cadence-release-think3","app":"cadence","build":"release","mode":"sprint","taps":3,"seconds":16.09,"overheadSeconds":1.09,"score":90,"grade":"Cogent.","savedSessions":1,"wpm":119,"fillerRate":0,"stalls":1,"words":30,"path":["open: [data-open-trainer=\"sprint\"]","Record","Finish"]}
