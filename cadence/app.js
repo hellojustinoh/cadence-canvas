@@ -147,14 +147,14 @@ const BUILD = (() => {
     return localStorage.getItem('cadence_build') || 'release';
   } catch { return 'release'; }
 })();
-const FLAG_DEFAULTS = {
-  clockOnSpeech: false,   // stalls and wpm are measured from the first word (the clock still counts from Record)
-  cleanCurve: false,      // full marks up to 2 fillers / 100 words
-  micRetryInline: false,  // mic denied keeps the session screen
-  interruptedGuard: false,// a drill cut off by a hide/lock is not scored or saved
-  longHistory: false,     // keep 5000 sessions instead of 200
-  streakGrace: false,     // streak counts from yesterday until today's drill
-  recognitionLocale: false,// English device locale passed to recognition instead of en-US
+const FLAG_DEFAULTS = { // all on by owner decision 2026-10-02; ?flags=-name turns one off, ?build=release clears edits
+  clockOnSpeech: true,    // stalls and wpm are measured from the first word (the clock still counts from Record)
+  cleanCurve: true,       // full marks up to 2 fillers / 100 words
+  micRetryInline: true,   // mic denied keeps the session screen
+  interruptedGuard: true, // a drill cut off by a hide/lock is not scored or saved
+  longHistory: true,      // keep 5000 sessions instead of 200
+  streakGrace: true,      // streak counts from yesterday until today's drill
+  recognitionLocale: true, // English device locale passed to recognition instead of en-US
 };
 const FLAGS = (() => {
   const f = { ...FLAG_DEFAULTS };
