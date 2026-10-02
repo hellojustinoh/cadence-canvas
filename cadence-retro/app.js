@@ -366,8 +366,9 @@ async function beginSession() {
   rec.onerror = e => {
     if (e.error === 'language-not-supported' && rec.lang !== 'en-US') { rec.lang = 'en-US'; return; }
     if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-      state.running = false;
-      if (typeof setOnAir === 'function') setOnAir(false);
+      stopSession(true); // mic stream, timer, waveform and audio context all go
+      resetSessionUI(MODES[state.mode].seconds);
+      setOnAir(false);
       micInline();
     }
   };

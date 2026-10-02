@@ -265,7 +265,8 @@ async function beginSession() {
     // an unsupported regional model would otherwise restart forever with no words; fall back to en-US once
     if (e.error === 'language-not-supported' && rec.lang !== 'en-US') { rec.lang = 'en-US'; return; }
     if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-      state.running = false;
+      stopSession(true); // mic stream, timer, waveform and audio context all go
+      resetSessionUI(MODES[state.mode].seconds);
       $('#liveTranscript').innerHTML = '<span class="lt-mic">Speech recognition was blocked. Allow the mic for this site, then tap Record again.</span>';
     }
   };

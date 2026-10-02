@@ -41,3 +41,21 @@ blocked service shows a message instead of a silent loop.
 The one thing to check on the phone: on `?build=test`, do one Sprint and
 confirm words appear live under en-SG recognition. If not,
 `?flags=-recognitionLocale`.
+
+## Review 3 (after round 3: the port and layout v2) — NOTHING WORTH BUILDING
+Taps are 3 on five skins; retro's 4 and anime's extra seconds are the skins'
+own boot and intro, not the engine. No cut idea has a new reason.
+
+Bugs it found, both fixed and verified in headless Chrome on all six skins:
+- `sessionLayoutV2`'s `display: flex` on `#view-session` beat the `[hidden]`
+  attribute, so on the test build the hidden session view (with its pinned
+  Record bar) showed on the drills, results and progress views at phone
+  width and pushed the score below the fold. Added `#view-session[hidden]
+  { display: none }` inside the same media block; `100vh` fallback added.
+- A `not-allowed` recognition error only set `running = false`, leaving the
+  mic stream, timer, waveform loop and audio context running in every skin.
+  Now `stopSession(true)` + `resetSessionUI()` + the message; retro also
+  turns ON AIR off.
+It also confirmed every port anchor landed in the right place, that retro's
+mic-denied path stays in its window, and that the editorial variant does
+not have the 560 px waveform bug (its stage never stacks into a column).

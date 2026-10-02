@@ -726,7 +726,8 @@ button { font-family: var(--sans); cursor: pointer; }
    ============================================================ */
 @media (max-width: 760px) {
   /* the view fills the trainer so the bar sits at the bottom whether or not the content overflows */
-  html[data-flags~="sessionLayoutV2"] #view-session { display: flex; flex-direction: column; min-height: calc(100dvh - 72px); padding-bottom: 0; }
+  html[data-flags~="sessionLayoutV2"] #view-session { display: flex; flex-direction: column; min-height: calc(100vh - 72px); min-height: calc(100dvh - 72px); padding-bottom: 0; }
+  html[data-flags~="sessionLayoutV2"] #view-session[hidden] { display: none; }
   html[data-flags~="sessionLayoutV2"] #waveCanvas { height: 72px; padding: 0 8px; }
   html[data-flags~="sessionLayoutV2"] .live-transcript { min-height: 56px; max-height: 140px; margin-top: 1rem; padding: 1rem 1.25rem; }
   html[data-flags~="sessionLayoutV2"] #view-session .controls {
