@@ -90,3 +90,11 @@ build step, no dependencies.
 ---
 
 🤖 Built with [Claude Code](https://claude.com/claude-code).
+
+## Build switch (collage app)
+
+The public collage app carries a test-build switch. `?build=test` turns every
+flag on and persists; `?build=release` turns them off and clears hand edits;
+`?flags=a,-b` toggles single flags. The flags, what each one changes and how
+it was measured are in `docs/overnight-2026-10-01/`. Harness:
+`NODE_PATH=/opt/node-tools/node_modules node tools/measure.mjs --build=test`.
