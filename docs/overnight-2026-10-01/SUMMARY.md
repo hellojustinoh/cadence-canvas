@@ -1,7 +1,23 @@
 # Overnight summary · 1–2 Oct 2026
 
-**Loop:** 2 build rounds, 12 PRDs, 12 cut-reviews, 3 drawing critiques,
-2 balance reviews in a row found nothing worth building. Stopped at ~01:30 SGT.
+**Loop:** 3 build rounds, 15 PRDs, 15 cut-reviews, 5 drawing critiques,
+4 balance reviews. Rounds 1–2 overnight (stopped ~01:30 SGT after two dry
+balance reviews); round 3 the next day after the owner's decision form.
+
+## Round 3 (after the decision form)
+- **Engine ported to all six variants** (`tools/port-engine.py`, asserted
+  anchors): clockOnSpeech, cleanCurve, micRetryInline, interruptedGuard,
+  longHistory, streakGrace, recognitionLocale, each in the skin's own voice.
+  All six give identical scores on the same stubbed drill.
+- **sessionLayoutV2** (collage, phones, flag): Record in a bar pinned to the
+  bottom, waveform 72 px, transcript 56 px until words arrive. Record bottom
+  edge 779 → 832 px, width 132 → 284 px.
+- **Decision form** rebuilt with a before/after phone screenshot on every card.
+- Cut: Progress "new rules" labels; chip restyle; `viewport-fit=cover`.
+- Bugs found by balance reviews and fixed: hidden session view leaking under
+  the layout flag; a blocked recognizer leaving the mic and timer running.
+
+## Rounds 1–2 (overnight)
 
 **Shipped to `claude/bold-maxwell-tpd6bo` (collage app only), all off in release:**
 
