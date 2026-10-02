@@ -21,6 +21,17 @@ const THINK = Number(args.think || 0);      // seconds of silence after Record b
 const RUNOUT = !!args.runout;               // let the timer run out instead of tapping Finish
 const DENIED = !!args.denied;               // first getUserMedia call rejects (mic denied), then allowed
 const MODE = args.mode || 'sprint';
+const APP = args.app || 'cadence-collage';   // which variant to drive
+// per-variant selectors: how a drill opens, where results show, which element carries the grade
+const APPS = {
+  'cadence-collage': { open: '.hero-ctas .btn-solid', pick: m => `#view-drills [data-start="${m}"]`, picker: '#view-drills', session: '#view-session', results: '#view-results', grade: '#scoreGrade' },
+  'cadence':         { open: `[data-open-trainer="${MODE}"]`, pick: m => `[data-start="${m}"]`, picker: '#view-drills', session: '#view-session', results: '#view-results', grade: '#scoreGrade' },
+  'cadence-toybox':  { open: `[data-open-trainer="${MODE}"]`, pick: m => `[data-start="${m}"]`, picker: '#view-drills', session: '#view-session', results: '#view-results', grade: '#scoreGrade' },
+  'cadence-anime':   { open: `[data-open-trainer="${MODE}"]`, pick: m => `[data-start="${m}"]`, picker: '#view-drills', session: '#view-session', results: '#view-results', grade: '#scoreGradeTag' },
+  'cadence-lab':     { open: `[data-open-console="${MODE}"]`, pick: m => `[data-start="${m}"]`, picker: '#view-drills', session: '#view-session', results: '#view-results', grade: '#scoreGradeTag' },
+  'cadence-retro':   { open: `[data-open-win="win-drills"]`, pick: m => `[data-start="${m}"]`, picker: '#win-drills', session: '#win-session', results: '#resultsBody', grade: '#scoreGrade' },
+};
+const A = APPS[APP];
 const HIDE = Number(args.hide || 0);        // seconds into the drill at which the page is hidden for 2 s (lock / app switch)
 
 // serve repo root
@@ -62,28 +73,33 @@ await ctx.addInitScript(STUB);
 const page = await ctx.newPage();
 let taps = 0; const path = [];
 async function tap(sel, name) {
-  await page.waitForSelector(sel, { state: 'visible', timeout: 10000 });
+  // several elements can share a selector (retro's menu bar + desktop icon); tap the first visible one
+  const loc = page.locator(sel).locator('visible=true').first();
+  await loc.waitFor({ state: 'visible', timeout: 10000 });
   if (args.shots) await page.screenshot({ path: `${args.shots}/${String(taps).padStart(2,'0')}-before-${(name||sel).replace(/[^a-z0-9]+/gi,'_')}.png` });
-  await page.click(sel); taps++; path.push(name || sel);
+  await loc.click(); taps++; path.push(name || sel);
 }
 
 const q = BUILD === 'release' ? '' : `?build=${BUILD}` + (EXTRA_FLAGS ? `&flags=${EXTRA_FLAGS}` : '');
 const t0 = Date.now();
-await page.goto(`http://127.0.0.1:${PORT}/cadence-collage/${q}`, { waitUntil: 'load' });
+await page.goto(`http://127.0.0.1:${PORT}/${APP}/${q}`, { waitUntil: 'load' });
+if (APP === 'cadence-retro') { await page.waitForTimeout(3500); try { await page.click('.boot, #boot, [data-open-win="win-welcome"]', { timeout: 500 }); } catch {} }
 
 // Path: hero CTA -> picker -> record -> speak -> finish -> score
 if (await page.$('#view-session:not([hidden]) #recordBtn:visible')) {
   // some builds may open straight into a session
 } else {
-  await tap('.hero-ctas .btn-solid', 'hero: Start a 60-second drill');
-  if (await page.isVisible('#view-drills')) await tap(`#view-drills [data-start="${MODE}"]`, `picker: ${MODE}`);
+  await tap(A.open, `open: ${A.open}`);
+  await page.waitForTimeout(300);
+  if (await page.isVisible(A.picker) && !(await page.isVisible('#recordBtn'))) await tap(A.pick(MODE), `picker: ${MODE}`);
+  else if (await page.isVisible(A.picker) && APP !== 'cadence-collage' && APP !== 'cadence-retro') {}
 }
 let recordVisible = await page.isVisible('#recordBtn');
 if (recordVisible) await tap('#recordBtn', 'Record');
 if (DENIED) {
   await page.waitForTimeout(600);
-  path.push(`[mic denied → on ${await page.isVisible('#view-session') ? 'session' : 'picker'} screen]`);
-  if (await page.isVisible('#view-drills')) await tap(`#view-drills [data-start="${MODE}"]`, `picker again: ${MODE}`);
+  path.push(`[mic denied → on ${await page.isVisible('#recordBtn') ? 'session' : 'picker'} screen]`);
+  if (!(await page.isVisible('#recordBtn'))) await tap(A.pick(MODE), `picker again: ${MODE}`);
   await tap('#recordBtn', 'Record again');
 }
 const tRecord = Date.now();
@@ -99,23 +115,23 @@ if (HIDE) {
   await page.waitForTimeout((THINK + SPEAK) * 1000);
 }
 if (RUNOUT) {
-  await page.waitForFunction(() => { const v = document.querySelector('#view-results'); return v && !v.hidden; }, null, { timeout: 90000 });
+  await page.waitForFunction(sel => { const v = document.querySelector(sel); return v && !v.hidden; }, A.results, { timeout: 90000 });
 } else {
   await tap('#recordBtn', 'Finish');
 }
-await page.waitForFunction(() => {
-  const v = document.querySelector('#view-results'); return v && !v.hidden;
-}, null, { timeout: 10000 });
+await page.waitForFunction(sel => {
+  const v = document.querySelector(sel); return v && !v.hidden;
+}, A.results, { timeout: 10000 });
 const t1 = Date.now();
 // let the score count-up animation settle before reading it
 await page.waitForTimeout(1400);
 const score = await page.textContent('#scoreNum');
 const stats = await page.evaluate(() => ({ wpm: +document.querySelector('#statWpm').textContent, fillerRate: +document.querySelector('#statFillers').textContent, stalls: +document.querySelector('#statPauses').textContent, words: +document.querySelector('#statWords').textContent }));
 const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('cadence_history_v1') || '[]').length);
-const grade = await page.textContent('#scoreGrade');
+const grade = await page.textContent(A.grade);
 const seconds = +((t1 - t0) / 1000).toFixed(2);
 const drillSeconds = RUNOUT ? (tRecord ? +((t1 - tRecord) / 1000).toFixed(1) : 0) : THINK + SPEAK;
-console.log(JSON.stringify({ label: LABEL, build: BUILD, mode: MODE, taps, seconds, overheadSeconds: +(seconds - drillSeconds).toFixed(2), score: score === '–' ? null : Number(score), grade, savedSessions: saved, ...stats, path }));
+console.log(JSON.stringify({ label: LABEL, app: APP, build: BUILD, mode: MODE, taps, seconds, overheadSeconds: +(seconds - drillSeconds).toFixed(2), score: score === '–' ? null : Number(score), grade, savedSessions: saved, ...stats, path }));
 if (args.shots) await page.screenshot({ path: `${args.shots}/99-results.png` });
 if (args.shot) await page.screenshot({ path: String(args.shot), fullPage: false });
 await browser.close(); srv.kill();

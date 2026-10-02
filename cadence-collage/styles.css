@@ -720,3 +720,31 @@ button { font-family: var(--sans); cursor: pointer; }
 .history-row .h-mode { font-weight: 700; text-transform: capitalize; }
 .history-row .h-date { color: var(--navy-35); font-size: 0.83rem; }
 .history-row .h-score { font-family: var(--serif); font-weight: 700; font-size: 1.2rem; color: var(--tomato); }
+
+/* ============================================================
+   PRD-14 · session layout v2 (flag sessionLayoutV2, phones only)
+   ============================================================ */
+@media (max-width: 760px) {
+  /* the view fills the trainer so the bar sits at the bottom whether or not the content overflows */
+  html[data-flags~="sessionLayoutV2"] #view-session { display: flex; flex-direction: column; min-height: calc(100dvh - 72px); padding-bottom: 0; }
+  html[data-flags~="sessionLayoutV2"] #waveCanvas { height: 72px; padding: 0 8px; }
+  html[data-flags~="sessionLayoutV2"] .live-transcript { min-height: 56px; max-height: 140px; margin-top: 1rem; padding: 1rem 1.25rem; }
+  html[data-flags~="sessionLayoutV2"] #view-session .controls {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    margin: auto -4vw 0;
+    padding: 0.8rem 4vw max(12px, env(safe-area-inset-bottom, 0px));
+    background: var(--paper);
+    box-shadow: 0 -6px 16px rgba(27,33,80,0.06);
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  html[data-flags~="sessionLayoutV2"] #recordBtn { flex: 1 1 auto; justify-content: center; min-height: 50px; }
+  html[data-flags~="sessionLayoutV2"] #recordBtn.recording { box-shadow: none; }
+  html[data-flags~="sessionLayoutV2"] #recordBtn:hover { transform: none; box-shadow: none; }
+  html[data-flags~="sessionLayoutV2"] #backToDrills { flex: none; border: none; background: none; padding: 0.4em 12px 0.4em 12px; font-weight: 600; color: var(--navy); align-self: center; }
+  html[data-flags~="sessionLayoutV2"] #backToDrills:hover { transform: none; box-shadow: none; color: var(--tomato); }
+  html[data-flags~="sessionLayoutV2"] .build-badge { bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 84px); }
+}

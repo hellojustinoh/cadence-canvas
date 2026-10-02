@@ -700,3 +700,6 @@ b { font-weight: 600; }
   .history-row { grid-template-columns: 1fr auto; }
   .history-row .h-date, .history-row .h-detail { display: none; }
 }
+
+/* mic-denied message shown in the transcript box (flag micRetryInline) */
+#liveTranscript .lt-mic { font-weight: 600; font-style: normal; }

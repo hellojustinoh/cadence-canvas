@@ -754,3 +754,6 @@ body {
 .history-row .h-mode { font-weight: 600; text-transform: capitalize; }
 .history-row .h-date { color: var(--ink-35); font-size: 0.82rem; }
 .history-row .h-score { font-family: var(--serif); font-size: 1.25rem; }
+
+/* mic-denied message shown in the transcript box (flag micRetryInline) */
+#liveTranscript .lt-mic { font-weight: 600; font-style: normal; }

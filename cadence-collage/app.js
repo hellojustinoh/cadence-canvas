@@ -86,6 +86,7 @@ const FLAG_DEFAULTS = {
   streakGrace: false,     // PRD-11 streak counts from yesterday until today's drill
   contrastLabels: false,  // a11y: muted labels at 4.5:1 instead of 2.3:1
   recognitionLocale: false,// locale: en-GB / en-SG / en-IN recognition instead of en-US for everyone
+  sessionLayoutV2: false, // PRD-14 phone session screen: Record in a bottom bar, shorter waveform and transcript
 };
 const FLAGS = (() => {
   const f = { ...FLAG_DEFAULTS };

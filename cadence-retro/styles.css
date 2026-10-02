@@ -526,3 +526,6 @@ canvas { image-rendering: pixelated; }
   .dock { position: fixed; bottom: 8px; }
   .dock-item { padding: 6px 9px 5px; }
 }
+
+/* mic-denied message shown in the transcript box (flag micRetryInline) */
+#liveTranscript .lt-mic { font-weight: 600; font-style: normal; }

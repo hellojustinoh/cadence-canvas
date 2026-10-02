@@ -205,9 +205,48 @@ const FILLER_RE = new RegExp(`\\b(${FILLERS.join('|')})\\b`, 'gi');
 
 const SEGMENTS = 24;
 
+/* ---------- build switch (shared engine; see cadence-collage/app.js) ----------
+   ?build=test turns every flag on and persists until ?build=release.
+   ?flags=a,-b overrides single flags (persisted). window.cadenceBuild shows the result. */
+const BUILD = (() => {
+  try {
+    const p = new URLSearchParams(location.search);
+    const b = p.get('build');
+    if (b) localStorage.setItem('cadence_build', b);
+    if (b === 'release') localStorage.removeItem('cadence_flags');
+    const f = p.get('flags');
+    if (f !== null) localStorage.setItem('cadence_flags', f);
+    return localStorage.getItem('cadence_build') || 'release';
+  } catch { return 'release'; }
+})();
+const FLAG_DEFAULTS = {
+  clockOnSpeech: false,   // stalls and wpm are measured from the first word (the clock still counts from Record)
+  cleanCurve: false,      // full marks up to 2 fillers / 100 words
+  micRetryInline: false,  // mic denied keeps the session screen
+  interruptedGuard: false,// a drill cut off by a hide/lock is not scored or saved
+  longHistory: false,     // keep 5000 sessions instead of 200
+  streakGrace: false,     // streak counts from yesterday until today's drill
+  recognitionLocale: false,// English device locale passed to recognition instead of en-US
+};
+const FLAGS = (() => {
+  const f = { ...FLAG_DEFAULTS };
+  if (BUILD === 'test') Object.keys(f).forEach(k => (f[k] = true));
+  let ov = '';
+  try { ov = localStorage.getItem('cadence_flags') || ''; } catch {}
+  ov.split(',').filter(Boolean).forEach(s => {
+    const off = s.startsWith('-');
+    const k = off ? s.slice(1) : s;
+    if (k in f) f[k] = !off;
+  });
+  return f;
+})();
+window.cadenceBuild = { build: BUILD, flags: FLAGS };
+document.documentElement.dataset.build = BUILD;
+document.documentElement.dataset.flags = Object.keys(FLAGS).filter(k => FLAGS[k]).join(' ');
+
 const state = {
   mode: null, prompt: '', running: false, startedAt: 0, elapsed: 0,
-  finalTranscript: '', interim: '', lastResultAt: 0, longPauses: 0,
+  finalTranscript: '', interim: '', lastResultAt: 0, longPauses: 0, firstResultAt: 0, interrupted: false,
   timerId: null, recognition: null, audioCtx: null, analyser: null,
   stream: null, rafId: null,
 };
@@ -289,6 +328,7 @@ $('#recordBtn').addEventListener('click', () => {
 });
 
 async function beginSession() {
+  micRestore();
   if (!SR) {
     micWarn('ERROR: this browser has no speech recognition. Try Chrome.');
     closeSession();
@@ -298,6 +338,7 @@ async function beginSession() {
   try {
     state.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   } catch {
+    if (FLAGS.micRetryInline) { micInline(); return; }
     micWarn('ERROR: microphone access denied. Allow the mic and retry.');
     closeSession();
     openWin('win-drills');
@@ -306,7 +347,7 @@ async function beginSession() {
 
   Object.assign(state, {
     running: true, startedAt: performance.now(), elapsed: 0,
-    finalTranscript: '', interim: '', lastResultAt: performance.now(), longPauses: 0,
+    finalTranscript: '', interim: '', lastResultAt: performance.now(), longPauses: 0, firstResultAt: 0, interrupted: false,
   });
 
   state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -319,8 +360,17 @@ async function beginSession() {
   const rec = new SR();
   rec.continuous = true;
   rec.interimResults = true;
-  rec.lang = 'en-US';
+  const lang = (navigator.language || '').toLowerCase();
+  rec.lang = FLAGS.recognitionLocale && lang.startsWith('en') ? navigator.language : 'en-US';
   rec.onresult = onSpeechResult;
+  rec.onerror = e => {
+    if (e.error === 'language-not-supported' && rec.lang !== 'en-US') { rec.lang = 'en-US'; return; }
+    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+      state.running = false;
+      if (typeof setOnAir === 'function') setOnAir(false);
+      micInline();
+    }
+  };
   rec.onend = () => { if (state.running) { try { rec.start(); } catch {} } };
   rec.start();
   state.recognition = rec;
@@ -335,7 +385,8 @@ async function beginSession() {
     $('#timerNum').textContent = Math.ceil(left);
     const litCount = Math.ceil((left / total) * SEGMENTS);
     segEls.forEach((el, i) => el.classList.toggle('off', i >= litCount));
-    if (performance.now() - state.lastResultAt > 2000) {
+    const armed = !FLAGS.clockOnSpeech || state.firstResultAt > 0; // reading the prompt is not a stall
+    if (armed && performance.now() - state.lastResultAt > 2000) {
       state.longPauses++;
       state.lastResultAt = performance.now();
     }
@@ -345,6 +396,7 @@ async function beginSession() {
 
 function onSpeechResult(e) {
   state.lastResultAt = performance.now();
+  if (!state.firstResultAt) state.firstResultAt = state.lastResultAt;
   let interim = '';
   for (let i = e.resultIndex; i < e.results.length; i++) {
     const t = e.results[i][0].transcript;
@@ -430,7 +482,9 @@ function escapeHtml(s) {
 function scoreSession() {
   const text = state.finalTranscript.trim();
   const words = text ? text.split(/\s+/).length : 0;
-  const minutes = Math.max(state.elapsed, 5) / 60;
+  let spoken = state.elapsed;
+  if (FLAGS.clockOnSpeech && state.firstResultAt > 0) spoken = Math.min(spoken, (performance.now() - state.firstResultAt) / 1000);
+  const minutes = Math.max(spoken, 5) / 60;
   const wpm = Math.round(words / minutes);
   const fillers = countFillers(text);
   const fillerRate = words ? (fillers / words) * 100 : 0;
@@ -441,14 +495,19 @@ function scoreSession() {
   else if (wpm < 130) pace = Math.max(0, (wpm - 50) / (130 - 50)) * 100;
   else pace = Math.max(0, 1 - (wpm - 190) / 90) * 100;
 
-  const fillerScore = Math.max(0, 100 - fillerRate * 12);
+  const fillerScore = FLAGS.cleanCurve
+    ? Math.max(0, 100 - Math.max(0, fillerRate - 2) * 10)
+    : Math.max(0, 100 - fillerRate * 12);
   const pauseScore = Math.max(0, 100 - pauses * 18);
 
   const w = MODES[state.mode].weights;
   let score = Math.round(pace * w.pace + fillerScore * w.filler + pauseScore * w.pause);
   if (words < 10) score = Math.min(score, 25);
 
-  return { words, wpm, fillers, fillerRate: +fillerRate.toFixed(1), pauses, score };
+  const r = { words, wpm, fillers, fillerRate: +fillerRate.toFixed(1), pauses, score };
+  if (FLAGS.clockOnSpeech) r.clockOnSpeech = true;
+  if (FLAGS.cleanCurve) r.cleanCurve = true;
+  return r;
 }
 
 function gradeFor(score) {
@@ -470,6 +529,7 @@ function tipFor(r) {
 /* ---------- results ---------- */
 function showResults() {
   const r = scoreSession();
+  const cut = FLAGS.interruptedGuard && state.interrupted;
   setOnAir(false);
 
   $('#sessionTitle').textContent = 'REPORT.TXT';
@@ -480,16 +540,16 @@ function showResults() {
   $('#statFillers').textContent = r.fillerRate;
   $('#statPauses').textContent = r.pauses;
   $('#statWords').textContent = r.words;
-  $('#scoreGrade').textContent = gradeFor(r.score);
-  $('#scoreTip').textContent = tipFor(r);
+  $('#scoreGrade').textContent = cut ? 'TAPE CUT.' : (gradeFor(r.score));
+  $('#scoreTip').textContent = cut ? '> the window went away mid-episode, so the mic stopped. Score not saved. Transcript below.' : tipFor(r);
 
   const transcript = state.finalTranscript.trim();
   $('#resultTranscript').innerHTML = transcript
     ? markFillers(escapeHtml(transcript))
     : '<i>&gt; no speech detected. check the microphone, then tape another.</i>';
 
-  animateNumber($('#scoreNum'), r.score, 900);
-  saveSession(r);
+  if (cut) $('#scoreNum').textContent = '–'; else animateNumber($('#scoreNum'), r.score, 900);
+  if (!cut) saveSession(r);
 }
 
 function animateNumber(el, target, ms) {
@@ -508,7 +568,8 @@ const history = () => JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
 function saveSession(r) {
   const h = history();
   h.push({ at: Date.now(), mode: state.mode, ...r });
-  localStorage.setItem(STORE_KEY, JSON.stringify(h.slice(-200)));
+  const cap = FLAGS.longHistory ? 5000 : 200;
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(h.slice(-cap))); } catch {}
   renderStreak();
 }
 
@@ -519,10 +580,12 @@ function renderStreak() {
   const days = new Set(h.map(s => new Date(s.at).toDateString()));
   let streak = 0;
   const d = new Date();
+  const todayOpen = FLAGS.streakGrace && !days.has(d.toDateString());
+  if (todayOpen) d.setDate(d.getDate() - 1);
   while (days.has(d.toDateString())) { streak++; d.setDate(d.getDate() - 1); }
   const last = h[h.length - 1];
   el.textContent = streak > 1
-    ? `${streak} days of episodes in a row. Last score: ${last.score}/100.`
+    ? (todayOpen ? `${streak} days of episodes in a row. Today's is still untaped.` : `${streak} days of episodes in a row. Last score: ${last.score}/100.`)
     : `${h.length} episode${h.length > 1 ? 's' : ''} taped. Last score: ${last.score}/100.`;
 }
 renderStreak();
@@ -573,3 +636,18 @@ function renderProgress() {
     list.appendChild(row);
   });
 }
+
+/* ---------- shared engine helpers (ported from cadence-collage) ---------- */
+function micInline() {
+  const lt = $('#liveTranscript');
+  if (!lt.dataset.prev) lt.dataset.prev = lt.innerHTML;
+  lt.innerHTML = '<span class="lt-mic">ERROR: microphone access denied. Allow the mic, then press Record again.</span>';
+}
+function micRestore() {
+  const lt = $('#liveTranscript');
+  if (lt.dataset.prev) { lt.innerHTML = lt.dataset.prev; delete lt.dataset.prev; }
+  const w = $('#micWarning'); if (w) w.hidden = true;
+}
+document.addEventListener('visibilitychange', () => {
+  if (FLAGS.interruptedGuard && state.running && document.visibilityState === 'hidden') state.interrupted = true;
+});
