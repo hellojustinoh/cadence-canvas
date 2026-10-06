@@ -1,0 +1,29 @@
+{
+  "name": "cadence-canvas",
+  "version": "1.0.0",
+  "description": "**Cadence** is a browser-based voice-training gym: 60-second speaking drills that score you on pace, filler words, and flow, built on the premise that as AI interfaces go voice-first, the bottleneck stops being how fast you type and becomes how clearly you can think out loud.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hellojustinoh/cadence-canvas.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hellojustinoh/cadence-canvas/issues"
+  },
+  "homepage": "https://github.com/hellojustinoh/cadence-canvas#readme",
+  "dependencies": {
+    "@capacitor-community/speech-recognition": "^7.0.1",
+    "@capacitor/cli": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/ios": "^8.5.2"
+  }
+}

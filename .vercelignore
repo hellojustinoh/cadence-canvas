@@ -11,3 +11,12 @@ cadence-anime
 # Overnight working docs and the measurement harness are not part of the site.
 docs
 tools
+
+# iOS shell and its build inputs are not part of the site
+ios
+ios-shell
+www
+node_modules
+package.json
+package-lock.json
+capacitor.config.json

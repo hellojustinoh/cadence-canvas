@@ -4,3 +4,7 @@ __pycache__/
 *.log
 .vscode/
 .idea/
+
+# Capacitor shell: generated web build and node modules stay out of git
+node_modules/
+www/
