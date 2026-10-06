@@ -1,0 +1,11 @@
+{
+  "appId": "com.justinoh.cadence",
+  "appName": "Cadence",
+  "webDir": "www",
+  "ios": {
+    "contentInset": "automatic",
+    "backgroundColor": "#ffffff",
+    "allowsLinkPreview": false
+  },
+  "plugins": {}
+}
