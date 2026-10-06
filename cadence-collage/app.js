@@ -87,6 +87,8 @@ const FLAG_DEFAULTS = { // all on by owner decision 2026-10-02; ?flags=-name tur
   contrastLabels: true,   // a11y: muted labels at 4.5:1 instead of 2.3:1
   recognitionLocale: true, // locale: en-GB / en-SG / en-IN recognition instead of en-US for everyone
   sessionLayoutV2: true,  // PRD-14 phone session screen: Record in a bottom bar, shorter waveform and transcript
+  hesitationDetect: false,// PRD-16 count steady voiced sounds the recognizer turned into no words ("uhhh") as fillers
+  shortStall: false,      // PRD-16 fallback: a stall is 1.2 s of silence, not 2 s
 };
 const FLAGS = (() => {
   const f = { ...FLAG_DEFAULTS };
@@ -107,6 +109,7 @@ document.documentElement.dataset.flags = Object.keys(FLAGS).filter(k => FLAGS[k]
 const state = {
   mode: null, prompt: '', running: false, startedAt: 0, elapsed: 0,
   finalTranscript: '', interim: '', lastResultAt: 0, longPauses: 0, firstResultAt: 0, interrupted: false,
+  hesitations: 0, detector: null,
   timerId: null, recognition: null, audioCtx: null, analyser: null,
   stream: null, rafId: null,
 };
@@ -214,6 +217,38 @@ function resetSessionUI(seconds) {
   c.getContext('2d').clearRect(0, 0, c.width, c.height);
 }
 
+/* ---------- hesitation detector (PRD-16) ----------
+   Dictation recognizers delete "um" and "uhhh" before the app sees them. What survives
+   in the audio is a steady voiced sound, 300 ms or longer, during which the recognizer
+   adds no words. Fed once per animation frame with the RMS level (0..1) and the spectral
+   flux (0..1, frame-to-frame change of the spectrum), it reports one hesitation per run. */
+class HesitationDetector {
+  constructor(opts = {}) {
+    this.minMs = opts.minMs ?? 320;       // how long the sound has to hold
+    this.rmsOn = opts.rmsOn ?? 0.045;     // voiced level
+    this.fluxMax = opts.fluxMax ?? 0.07;  // steady spectrum (a vowel held, not speech)
+    this.gapMs = opts.gapMs ?? 150;       // silence needed before the next one can count
+    this.runStart = 0; this.steadyMs = 0; this.lastT = 0; this.counted = false; this.quietSince = 0; this.count = 0;
+  }
+  /** returns true when a new hesitation is counted at this frame */
+  step(rms, flux, t, lastResultAt) {
+    const dt = this.lastT ? Math.min(100, t - this.lastT) : 16; this.lastT = t;
+    if (rms >= this.rmsOn) {
+      if (!this.runStart) this.runStart = t;
+      this.steadyMs = flux <= this.fluxMax ? this.steadyMs + dt : Math.max(0, this.steadyMs - dt * 2);
+      this.quietSince = 0;
+      // words arriving during the run mean it was speech so far; the run starts over from here
+      if (lastResultAt > this.runStart) { this.runStart = t; this.steadyMs = 0; return false; }
+      if (!this.counted && this.steadyMs >= this.minMs) { this.counted = true; this.count++; return true; }
+      return false;
+    }
+    if (!this.quietSince) this.quietSince = t;
+    if (t - this.quietSince >= this.gapMs) { this.runStart = 0; this.steadyMs = 0; this.counted = false; }
+    return false;
+  }
+}
+if (typeof module !== 'undefined' && module.exports) module.exports = { HesitationDetector };
+
 /* ---------- recording ---------- */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -246,6 +281,7 @@ async function beginSession() {
   Object.assign(state, {
     running: true, startedAt: performance.now(), elapsed: 0,
     finalTranscript: '', interim: '', lastResultAt: performance.now(), longPauses: 0, firstResultAt: 0, interrupted: false,
+    hesitations: 0, detector: FLAGS.hesitationDetect ? new HesitationDetector() : null,
   });
 
   state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -287,7 +323,8 @@ async function beginSession() {
     $('#timerArc').style.strokeDashoffset = CIRC * (1 - left / total);
     // PRD-3: with clockOnSpeech, reading the prompt before the first word is not a stall.
     const armed = !FLAGS.clockOnSpeech || state.firstResultAt > 0;
-    if (armed && performance.now() - state.lastResultAt > 2000) {
+    const stallMs = FLAGS.shortStall ? 1200 : 2000;
+    if (armed && performance.now() - state.lastResultAt > stallMs) {
       state.longPauses++;
       state.lastResultAt = performance.now();
     }
@@ -307,7 +344,7 @@ function onSpeechResult(e) {
   state.interim = interim;
   renderLiveTranscript();
 
-  const n = countFillers(state.finalTranscript + ' ' + state.interim);
+  const n = countFillers(state.finalTranscript + ' ' + state.interim) + state.hesitations;
   const el = $('#liveFillerCount');
   if (el.textContent !== String(n)) {
     el.textContent = n;
@@ -332,10 +369,27 @@ function drawWave() {
   const canvas = $('#waveCanvas');
   const ctx = canvas.getContext('2d');
   const data = new Uint8Array(state.analyser.frequencyBinCount);
+  const wave = new Uint8Array(state.analyser.fftSize);
+  const prev = new Float32Array(data.length);
   const bars = 46;
   function frame() {
     if (!state.analyser) return;
     state.analyser.getByteFrequencyData(data);
+    if (state.detector) {
+      state.analyser.getByteTimeDomainData(wave);
+      let sq = 0; for (let i = 0; i < wave.length; i++) { const v = (wave[i] - 128) / 128; sq += v * v; }
+      const rms = Math.sqrt(sq / wave.length);
+      let flux = 0, mag = 0;
+      for (let i = 0; i < data.length; i++) { const v = data[i] / 255; flux += Math.abs(v - prev[i]); mag += v; prev[i] = v; }
+      flux = mag > 0 ? flux / mag : 0;
+      if (state.detector.step(rms, flux, performance.now(), state.lastResultAt)) {
+        state.hesitations = state.detector.count;
+        renderLiveTranscript();
+        const el = $('#liveFillerCount');
+        el.textContent = countFillers(state.finalTranscript + ' ' + state.interim) + state.hesitations;
+        const chip = $('#liveFillerChip'); chip.classList.remove('bump'); void chip.offsetWidth; chip.classList.add('bump');
+      }
+    }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const step = Math.floor(data.length / bars);
     const bw = canvas.width / bars;
@@ -394,7 +448,8 @@ function scoreSession() {
   }
   const minutes = Math.max(spoken, 5) / 60;
   const wpm = Math.round(words / minutes);
-  const fillers = countFillers(text);
+  const hesitations = FLAGS.hesitationDetect ? state.hesitations : 0;
+  const fillers = countFillers(text) + hesitations;
   const fillerRate = words ? (fillers / words) * 100 : 0;
   const pauses = state.longPauses;
 
@@ -414,6 +469,7 @@ function scoreSession() {
   if (words < 10) score = Math.min(score, 25);
 
   const r = { words, wpm, fillers, fillerRate: +fillerRate.toFixed(1), pauses, score };
+  if (hesitations) r.hesitations = hesitations;
   // scoring flags travel with the session so history stays comparable
   if (FLAGS.clockOnSpeech) r.clockOnSpeech = true;
   if (FLAGS.cleanCurve) r.cleanCurve = true;
@@ -429,7 +485,10 @@ function gradeFor(score) {
 
 function tipFor(r) {
   if (r.words < 10) return 'The mic barely caught anything. Move closer, speak up, and give it another minute.';
-  if (r.fillerRate > 5) return `${r.fillers} fillers in ${r.words} words. Try replacing each one with a small silent pause. Silence reads as thoughtful; fillers read as nervous.`;
+  if (r.fillerRate > 5) {
+    const h = r.hesitations ? ` (${r.hesitations} of them "um" sounds)` : '';
+    return `${r.fillers} fillers in ${r.words} words${h}. Try replacing each one with a small silent pause. Silence reads as thoughtful; fillers read as nervous.`;
+  }
   if (r.pauses >= 3) return `You stalled ${r.pauses} times for over 2 seconds. A trick that works: decide your last word before you say your first.`;
   if (r.wpm < 110) return `${r.wpm} wpm is a gentle stroll. Push the pace a little. Speed forces your brain to edit ahead.`;
   if (r.wpm > 210) return `${r.wpm} wpm is genuinely quick. Skim the transcript and make sure it still reads like sentences.`;
